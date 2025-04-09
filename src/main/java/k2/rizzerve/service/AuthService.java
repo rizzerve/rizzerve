@@ -30,7 +30,8 @@ public class AuthService {
         User user = new User(username, email, hashedPassword);
         user.addRole("USER");
 
-        return userRepository.save(user);
+        userRepository.save(user); // void sekarang
+        return user;
     }
 
     public Optional<User> login(String username, String rawPassword) {
@@ -41,7 +42,7 @@ public class AuthService {
     public Optional<User> updateProfile(Long id, String newName) {
         return userRepository.findById(id).map(user -> {
             user.setUsername(newName);
-            return userRepository.save(user);
+            return user;
         });
     }
 
