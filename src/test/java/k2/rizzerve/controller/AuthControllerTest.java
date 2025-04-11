@@ -79,10 +79,7 @@ public class AuthControllerTest {
                 .param("password", "wrongpassword")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(content().string("")); // This is causing the test to fail
-                // Fix: The empty optional is being returned as null content, not empty string
-                // Change to match actual controller behavior
-                //.andExpect(content().string(""));
+                .andExpect(content().string("")); 
     }
 
     @Test
