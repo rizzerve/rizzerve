@@ -2,6 +2,7 @@ package k2.rizzerve.service;
 
 import k2.rizzerve.model.User;
 import k2.rizzerve.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,10 @@ public class AuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository) {
+    @Autowired
+    public AuthService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User registerUser(String username, String email, String rawPassword) throws Exception {
@@ -30,8 +32,7 @@ public class AuthService {
         User user = new User(username, email, hashedPassword);
         user.addRole("USER");
 
-        userRepository.save(user); // void sekarang
-        return user;
+        return userRepository.save(user);
     }
 
     public Optional<User> login(String username, String rawPassword) {
@@ -42,7 +43,7 @@ public class AuthService {
     public Optional<User> updateProfile(Long id, String newName) {
         return userRepository.findById(id).map(user -> {
             user.setUsername(newName);
-            return user;
+            return userRepository.save(user);
         });
     }
 
