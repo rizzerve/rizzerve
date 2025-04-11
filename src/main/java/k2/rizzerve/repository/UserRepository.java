@@ -6,10 +6,12 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class UserRepository {
     private final List<User> users = new ArrayList<>();
+    private final AtomicLong idCounter = new AtomicLong(1);
 
     public Optional<User> findByUsername(String username) {
         return users.stream()
@@ -25,8 +27,15 @@ public class UserRepository {
         return users.stream().anyMatch(user -> user.getEmail().equals(email));
     }
 
-    public void save(User user) {
-        users.add(user);
+    public User save(User user) {
+        if (user.getId() == null) {
+            user.setId(idCounter.getAndIncrement());
+            users.add(user);
+        } else {
+            deleteById(user.getId());
+            users.add(user);
+        }
+        return user;
     }
 
     public Optional<User> findById(Long id) {
@@ -41,6 +50,10 @@ public class UserRepository {
 
     public void deleteById(Long id) {
         users.removeIf(user -> user.getId().equals(id));
+    }
+    
+    public List<User> findAll() {
+        return new ArrayList<>(users);
     }
 }
 
