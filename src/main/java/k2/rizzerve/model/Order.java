@@ -1,6 +1,7 @@
 package k2.rizzerve.model;
 
 import jakarta.persistence.*;
+import k2.rizzerve.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,10 @@ public class Order {
     @MapKeyColumn(name = "food_id")
     @Column(name = "amount")
     private Map<Long, Integer> foodItems;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderStatus status = OrderStatus.AWAITING_PAYMENT;
 
     public Order(Long customerId, Long tableId) {
         this.customerId = customerId;
