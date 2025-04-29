@@ -15,9 +15,11 @@
 - Ferdinand: Checkout
 - Kezia: Manage Menu
 
-## URL(s) to the group project repository/ies:
+## URL(s) to the group project repository:
+https://github.com/rizzerve/rizzerve
 
-https://github.com/isaacboentoro/rizzerve
+## URL to the deployed app:
+https://rizzerve-deploy.ambitiouswater-27e3bbd0.southeastasia.azurecontainerapps.io/
 
 ## URL(s) to the technical documents (the initial design):
 https://docs.google.com/document/d/1XfDrTGUXtxLi6n77F-Ivzk7vgRkqt_4X4bSRE_sT4IQ/edit?usp=sharing

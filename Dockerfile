@@ -1,4 +1,4 @@
-FROM amazoncorretto:24-alpine
+FROM eclipse-temurin:24-jdk
 
 LABEL maintainer="Rizzerve Application"
 
