@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@jakarta.persistence.Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
