@@ -163,4 +163,64 @@ public class TableControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Table not found"));
     }
+
+    @Test
+    public void testCreateTable_WebRedirect() throws Exception {
+        Table mockTable = new Table(1L, "T1", false);
+        when(tableService.createTable(anyString())).thenReturn(mockTable);
+
+        mockMvc.perform(post("/api/tables")
+                .param("tableNumber", "T1")
+                .header("Accept", "text/html")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isFound())
+                .andExpect(header().string("Location", "/tables"));
+    }
+
+    @Test
+    public void testCreateTable_WebRedirectError() throws Exception {
+        when(tableService.createTable(anyString())).thenThrow(new Exception("Table number already exists"));
+
+        mockMvc.perform(post("/api/tables")
+                .param("tableNumber", "T1")
+                .header("Accept", "text/html")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isFound())
+                .andExpect(header().string("Location", org.hamcrest.Matchers.containsString("/tables?error=")));
+    }
+
+    @Test
+    public void testUpdateTable_WebRedirect() throws Exception {
+        Table mockTable = new Table(1L, "T2", false);
+        when(tableService.updateTable(anyLong(), anyString())).thenReturn(Optional.of(mockTable));
+
+        mockMvc.perform(put("/api/tables/1")
+                .param("newTableNumber", "T2")
+                .header("Accept", "text/html")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isFound())
+                .andExpect(header().string("Location", "/tables"));
+    }
+
+    @Test
+    public void testUpdateTable_WebRedirectError() throws Exception {
+        when(tableService.updateTable(anyLong(), anyString())).thenThrow(new Exception("Table number already exists"));
+
+        mockMvc.perform(put("/api/tables/1")
+                .param("newTableNumber", "T2")
+                .header("Accept", "text/html")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isFound())
+                .andExpect(header().string("Location", org.hamcrest.Matchers.containsString("/tables?error=")));
+    }
+
+    @Test
+    public void testDeleteTable_WebRedirect() throws Exception {
+        when(tableService.deleteTable(anyLong())).thenReturn(true);
+
+        mockMvc.perform(delete("/api/tables/1")
+                .header("Accept", "text/html"))
+                .andExpect(status().isFound())
+                .andExpect(header().string("Location", "/tables"));
+    }
 }
