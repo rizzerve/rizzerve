@@ -18,7 +18,7 @@ public class Table {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "table_number", unique = true, nullable = false)
     private String tableNumber;
 
     private boolean occupied = false;
