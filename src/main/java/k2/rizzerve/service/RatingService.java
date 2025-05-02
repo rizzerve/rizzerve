@@ -1,7 +1,8 @@
 package k2.rizzerve.service;
 
 import k2.rizzerve.command.RatingCommand;
+import k2.rizzerve.model.Rating;
 
 public interface RatingService {
-    void executeCommand(RatingCommand command);
+    Rating executeCommand(RatingCommand command);
 }
