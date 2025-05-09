@@ -1,38 +1,56 @@
 package k2.rizzerve.model;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Builder;
+import lombok.Setter;
 
+import java.math.BigDecimal;
+
+@Setter
+@Getter
 @Entity
-@DiscriminatorValue("ITEM")
-public class MenuItem extends MenuComponent {
+@Table(name = "menu_items")
+public class MenuItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private double price;
+    private String name;
+    private BigDecimal price;
+
+    @Column(length = 1024)
     private String description;
-    private boolean available;
 
-    public MenuItem() {
-        super();
+    private boolean available  = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    public MenuItem() { }
+
+    private MenuItem(Builder b) {
+        this.name        = b.name;
+        this.price       = b.price;
+        this.description = b.description;
+        this.available   = b.available;
+        this.category    = b.category;
     }
 
-    public MenuItem(String name, double price, String description, boolean available) {
-        super(name);
-        this.price = price;
-        this.description = description;
-        this.available = available;
-    }
+    // Builder
+    public static class Builder {
+        private String name;
+        private BigDecimal price;
+        private String description;
+        private boolean available = true;
+        private Category category;
 
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public boolean isAvailable() { return available; }
-    public void setAvailable(boolean available) { this.available = available; }
-
-    @Override
-    public void display() {
-        System.out.println("MenuItem: " + getName() + " - Price: " + price);
+        public Builder name(String name)        { this.name = name; return this; }
+        public Builder price(BigDecimal p)     { this.price = p;   return this; }
+        public Builder description(String d)   { this.description = d; return this; }
+        public Builder available(boolean f)    { this.available = f;   return this; }
+        public Builder category(Category c)    { this.category = c;    return this; }
+        public MenuItem build()               { return new MenuItem(this); }
     }
 }
