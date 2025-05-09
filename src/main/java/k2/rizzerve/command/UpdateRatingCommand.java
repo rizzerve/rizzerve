@@ -3,24 +3,25 @@ package k2.rizzerve.command;
 import k2.rizzerve.model.Rating;
 import k2.rizzerve.repository.RatingRepository;
 
+import java.util.NoSuchElementException;
+
 public class UpdateRatingCommand implements RatingCommand {
-
     private final String id;
-    private final Rating updatedRating;
-    private final RatingRepository repository;
+    private final Rating updated;
+    private final RatingRepository repo;
 
-    public UpdateRatingCommand(String id, Rating updatedRating, RatingRepository repository) {
+    public UpdateRatingCommand(String id, Rating updated, RatingRepository repo) {
         this.id = id;
-        this.updatedRating = updatedRating;
-        this.repository = repository;
+        this.updated = updated;
+        this.repo = repo;
     }
 
     @Override
     public Rating execute() {
-        if (!repository.existsById(id)) {
-            throw new IllegalArgumentException("Rating with id " + id + " does not exist.");
+        if (!repo.existsById(id)) {
+            throw new NoSuchElementException("Rating "+id+" not found");
         }
-        repository.update(id, updatedRating);
-        return updatedRating;
+        repo.update(id, updated);
+        return updated;
     }
 }

@@ -3,21 +3,22 @@ package k2.rizzerve.command;
 import k2.rizzerve.model.Rating;
 import k2.rizzerve.repository.RatingRepository;
 
+import java.util.NoSuchElementException;
+
 public class DeleteRatingCommand implements RatingCommand {
-
     private final String id;
-    private final RatingRepository repository;
+    private final RatingRepository repo;
 
-    public DeleteRatingCommand(String id, RatingRepository repository) {
+    public DeleteRatingCommand(String id, RatingRepository repo) {
         this.id = id;
-        this.repository = repository;
+        this.repo = repo;
     }
 
     @Override
     public Rating execute() {
-        if (!repository.existsById(id)) {
-            throw new IllegalArgumentException("Rating with id " + id + " does not exist.");
+        if (!repo.existsById(id)) {
+            throw new NoSuchElementException("Rating "+id+" not found");
         }
-        return repository.deleteById(id);
+        return repo.deleteById(id);
     }
 }
