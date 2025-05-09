@@ -1,7 +1,11 @@
 package k2.rizzerve.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "categories")
 public class Category {
