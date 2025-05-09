@@ -1,8 +1,12 @@
 package k2.rizzerve.strategy;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class FiveStarRatingValidation implements RatingValidationStrategy {
+
     @Override
-    public boolean isValid(int value) {
-        return value >= 0 && value <= 5;
+    public boolean isValid(int ratingValue) {
+        return ratingValue >= 1 && ratingValue <= 5;
     }
 }
