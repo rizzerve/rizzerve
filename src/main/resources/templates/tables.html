@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Tables</title>
+    <meta charset="UTF-8"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-3xl mx-auto py-8">
+        <h1 class="text-3xl font-bold mb-6 text-center">Restaurant Tables</h1>
+
+        <div class="bg-white p-6 rounded shadow mb-8">
+            <h2 class="text-xl font-semibold mb-4">Add New Table</h2>
+            <form th:action="@{/api/tables}" method="post" class="flex gap-4 items-end">
+                <div>
+                    <label for="tableNumber" class="block text-sm font-medium text-gray-700">Table Number:</label>
+                    <input type="text" id="tableNumber" name="tableNumber" required
+                        class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"/>
+                </div>
+                <button type="submit"
+                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Add Table</button>
+            </form>
+        </div>
+
+        <div class="bg-white p-6 rounded shadow">
+            <h2 class="text-xl font-semibold mb-4">All Tables</h2>
+            <table class="min-w-full border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="px-4 py-2 border-b text-left">ID</th>
+                        <th class="px-4 py-2 border-b text-left">Table Number</th>
+                        <th class="px-4 py-2 border-b text-left">Occupied</th>
+                        <th class="px-4 py-2 border-b text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr th:each="table : ${tables}" class="hover:bg-gray-50">
+                    <td class="px-4 py-2 border-b" th:text="${table.id}"></td>
+                    <td class="px-4 py-2 border-b">
+                        <span th:if="${editId} != ${table.id}" th:text="${table.tableNumber}"></span>
+                        <form th:if="${editId} == ${table.id}" th:action="@{'/api/tables/' + ${table.id}}" method="post" class="flex gap-2">
+                            <input type="hidden" name="_method" value="put"/>
+                            <input type="text" name="newTableNumber" th:value="${table.tableNumber}" required
+                                class="rounded border-gray-300 focus:ring-blue-500 focus:border-blue-500 px-2 py-1"/>
+                            <button type="submit"
+                                class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition">Save</button>
+                        </form>
+                    </td>
+                    <td class="px-4 py-2 border-b" th:text="${table.occupied}"></td>
+                    <td class="px-4 py-2 border-b">
+                        <form th:if="${editId} != ${table.id}" th:action="@{/tables/edit}" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${table.id}"/>
+                            <button type="submit"
+                                class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition">Edit</button>
+                        </form>
+                        <form th:action="@{'/api/tables/' + ${table.id}}" method="post" style="display:inline;">
+                            <input type="hidden" name="_method" value="delete"/>
+                            <button type="submit"
+                                class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
+                                onclick="return confirm('Delete this table?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

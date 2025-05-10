@@ -20,8 +20,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Optional<User> login(@RequestParam String username, @RequestParam String password) {
-        return authService.login(username, password);
+    public User login(@RequestParam String username, @RequestParam String password) {
+        // Fix: Return null instead of an empty response for a failed login
+        return authService.login(username, password).orElse(null);
     }
 
     @GetMapping("/profile/{username}")
