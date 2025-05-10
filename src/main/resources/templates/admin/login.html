@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login</title>
+</head>
+<body>
+<h1>Login</h1>
+<form id="loginForm">
+    <label>Username: <input id="username" required/></label><br/>
+    <label>Password: <input id="password" type="password" required/></label><br/>
+    <button type="submit">Log In</button>
+</form>
+<p>Don't have an account? <a th:href="@{/admin/register}">Register here</a></p>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const resp = await fetch('/admin/login', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({username, password})
+        });
+        if (resp.ok) {
+            const { token } = await resp.json();
+            // store in localStorage
+            localStorage.setItem('jwtToken', token);
+            // also store in a cookie so the browser sends it automatically
+            document.cookie = `jwt=${token}; Path=/; SameSite=Strict;`;
+            window.location.href = '/admin/dashboard';
+        } else {
+            alert('Login failed');
+        }
+    });
+</script>
+</body>
+</html>

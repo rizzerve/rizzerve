@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+</head>
+<body>
+<h1>Edit Profile</h1>
+<form id="editForm">
+    <label>Name: <input id="name" required/></label><br/>
+    <label>Username: <input id="username" required/></label><br/>
+    <button type="submit">Save Changes</button>
+</form>
+<p><a th:href="@{/admin/profile/view}">Back to Profile</a></p>
+
+<script>
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+        alert('Please log in first.');
+        window.location.href = '/admin/login';
+    }
+
+    // preload existing name
+    fetch('/admin/profile', {
+        headers: { 'Authorization': 'Bearer ' + token }
+    })
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('name').value = data.name;
+            document.getElementById('username').value = data.username;
+        });
+
+    document.getElementById('editForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const name = document.getElementById('name').value;
+        const username = document.getElementById('username').value;
+
+        const resp = await fetch('/admin/profile', {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, username })
+        });
+        if (resp.ok) {
+            const { admin, token } = await resp.json();
+            // store the new token
+            localStorage.setItem('jwtToken', token);
+            document.cookie = `jwt=${token}; Path=/; SameSite=Strict;`;
+            alert('Profile updated.');
+            window.location.href = '/admin/profile/view';
+        }
+    });
+</script>
+</body>
+</html>
