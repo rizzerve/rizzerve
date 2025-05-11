@@ -51,9 +51,8 @@ public class UserRepository {
     public void deleteById(Long id) {
         users.removeIf(user -> user.getId().equals(id));
     }
-    
+
     public List<User> findAll() {
         return new ArrayList<>(users);
     }
 }
-
