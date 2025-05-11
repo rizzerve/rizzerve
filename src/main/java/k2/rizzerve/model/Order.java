@@ -38,4 +38,16 @@ public class Order {
         this.customerId = customerId;
         this.tableId = tableId;
     }
+
+    public void addFoodItem(Long foodId, Integer amount) {
+        foodItems.put(foodId, foodItems.getOrDefault(foodId, 0) + amount);
+    }
+
+    public void setFoodItem(Long foodId, Integer amount) {
+        foodItems.put(foodId, amount);
+    }
+
+    public void deleteFoodItem(Long foodId) {
+        foodItems.remove(foodId);
+    }
 }
