@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Sign Up</title>
+</head>
+<body>
+<h1>Admin Registration</h1>
+<form id="registerForm">
+    <label>Name: <input id="name" required/></label><br/>
+    <label>Username: <input id="username" required/></label><br/>
+    <label>Password: <input id="password" type="password" required/></label><br/>
+    <button type="submit">Register</button>
+</form>
+<p>Already have an account? <a th:href="@{/admin/login}">Login here</a></p>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const name = document.getElementById('name').value;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const resp = await fetch('/admin/register', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name, username, password})
+        });
+        if (resp.status === 201) {
+            alert('Registration successful – please log in.');
+            window.location.href = '/admin/login';
+        } else {
+            const err = await resp.json();
+            alert('Error: ' + (err.message || resp.statusText));
+        }
+    });
+</script>
+</body>
+</html>
