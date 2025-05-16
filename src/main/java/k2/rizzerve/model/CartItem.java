@@ -1,5 +1,6 @@
 package k2.rizzerve.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,14 +16,13 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Many CartItems can belong to one Cart
-    @ManyToOne(fetch = FetchType.LAZY) // LAZY fetching is generally preferred
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
+    @JsonIgnore // Prevents serializing the 'cart' field back to client
     private Cart cart;
 
-    // Many CartItems can refer to the same Product (indirectly via different carts)
-    // Or Many CartItems (across all carts) reference one Product
-    @ManyToOne(fetch = FetchType.LAZY)
+    // If product details (like name) are needed in the response, EAGER can be simpler here, otherwise use a DTO.
+    @ManyToOne(fetch = FetchType.EAGER) // << CHANGED TO EAGER (was LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
@@ -35,7 +35,6 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    // Method to calculate subtotal for this item
     public BigDecimal getSubtotal() {
         if (product == null || product.getPrice() == null || quantity <= 0) {
             return BigDecimal.ZERO;

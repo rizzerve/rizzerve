@@ -55,5 +55,10 @@ public class UserRepository {
     public List<User> findAll() {
         return new ArrayList<>(users);
     }
+
+    public void deleteAll() { // Or clearAll()
+        users.clear();
+        idCounter.set(1); // Reset ID counter if desired
+    }
 }
 

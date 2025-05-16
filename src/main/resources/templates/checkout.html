@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        table { width: 80%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .user-info { margin-bottom: 20px; font-size: 1.2em; }
+        .empty-cart { color: #777; }
+
+        .quantity-section {
+            display: flex;
+            flex-direction: column; /* Stack display above buttons */
+            align-items: center;
+            min-width: 80px; /* Ensure some space */
+        }
+        .quantity-display {
+            margin-bottom: 5px; /* Space between quantity and buttons */
+            font-weight: bold;
+        }
+        .quantity-buttons button {
+            margin: 0 2px;
+            padding: 3px 8px;
+            cursor: pointer;
+        }
+        .remove-checkbox { margin-left: 15px; }
+        .coupon-section { margin-top: 30px; }
+        .checkout-button-section { margin-top: 30px; }
+        .messages { margin-top:15px; padding:10px; border:1px solid transparent; border-radius:4px; }
+        .messages.success { border-color: #d6e9c6; background-color: #dff0d8; color: #3c763d; }
+        .messages.error { border-color: #ebccd1; background-color: #f2dede; color: #a94442; }
+
+        /* Styles for the user selector dropdown */
+        .user-selector { margin-bottom: 20px; }
+        .user-selector label { margin-right: 10px; }
+    </style>
+</head>
+<body>
+
+<h1>Checkout Page</h1>
+
+<!-- User Selection Dropdown -->
+<div class="user-selector">
+    <label for="userSelect">View Cart For:</label>
+    <select id="userSelect" name="userSelect">
+        <option th:each="user : ${allUsers}"
+                th:value="${user.id}"
+                th:text="${user.username + ' (ID: ' + user.id + ')'}"
+                th:selected="${user.id == selectedUserId}">
+            [User Name]
+        </option>
+    </select>
+</div>
+
+<!-- Updated User Info Display -->
+<div class="user-info">
+    Currently viewing cart for: <span th:text="${username}">[Username/ID]</span>
+</div>
+
+<div id="globalMessages" class="messages" style="display:none;"></div>
+
+<div th:if="${message_page_level}" class="empty-cart">
+    <p th:text="${message_page_level}">[Cart status message]</p>
+</div>
+
+<div th:if="${cart != null and cart.items != null and !cart.items.isEmpty()}">
+    <h2>Your Cart</h2>
+    <form id="cartForm">
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Remove</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item, iterStat : ${cartItems}" th:id="'item-row-' + ${item.id}">
+                <td th:text="${iterStat.count}">1</td>
+                <td th:text="${item.product != null ? item.product.name : 'Unknown Product'}">Product Name</td>
+                <td>
+                    <div class="quantity-section">
+                        <span class="quantity-display" th:id="'quantity-display-' + ${item.id}" th:text="${item.quantity}">0</span>
+                        <div class="quantity-buttons">
+                            <!-- Buttons are fine as they were in your provided version -->
+                            <button type="button" class="quantity-change-btn" th:attr="data-item-id=${item.id}" data-change="-1">-</button>
+                            <button type="button" class="quantity-change-btn" th:attr="data-item-id=${item.id}" data-change="1">+</button>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <input type="checkbox" class="remove-checkbox" name="removeItems" th:value="${item.id}" />
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
+    <div class="coupon-section">
+        <h3>Apply Coupon</h3>
+        <input type="text" id="couponCode" name="couponCode" placeholder="Enter coupon code" disabled/>
+        <button type="button" disabled>Confirm Coupon</button>
+    </div>
+
+    <div class="checkout-button-section">
+        <button type="button" disabled>Complete Checkout</button>
+    </div>
+
+</div>
+
+<div th:if="${cart == null or cart.items == null or cart.items.isEmpty()}">
+    <p th:unless="${message_page_level}">Your cart is currently empty.</p>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    const baseUrl = /*[[@{/}]]*/ '';
+    // This variable holds the ID of the user whose cart is currently being displayed.
+    // It's populated by Thymeleaf from the model attribute 'selectedUserId'.
+    const currentSelectedUserId = /*[[${selectedUserId}]]*/ null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Event listener for the user selection dropdown
+        const userSelect = document.getElementById('userSelect');
+        if (userSelect) {
+            userSelect.addEventListener('change', function() {
+                const newUserId = this.value;
+                window.location.href = baseUrl + 'checkout?userId=' + newUserId;
+            });
+        }
+
+        // Event listeners for quantity change buttons
+        const quantityButtons = document.querySelectorAll('.quantity-change-btn');
+        quantityButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-item-id');
+                const change = parseInt(this.getAttribute('data-change'));
+                updateQuantity(itemId, change);
+            });
+        });
+    });
+
+    async function updateQuantity(itemId, change) {
+        const quantityDisplay = document.getElementById('quantity-display-' + itemId);
+        if (!quantityDisplay) {
+            console.error('Quantity display for item ID ' + itemId + ' not found.');
+            displayGlobalMessage('Error: UI element missing for item ' + itemId, 'error');
+            return;
+        }
+
+        let currentQuantity = parseInt(quantityDisplay.textContent);
+        let newQuantity = currentQuantity + change;
+
+        // Business rule: quantity cannot go below 1 via +/- buttons.
+        // To remove, use the checkbox (once implemented).
+        if (newQuantity < 1) {
+            newQuantity = 1;
+        }
+
+        try {
+            const response = await fetch(`${baseUrl}api/cart/item/${itemId}/quantity`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // CSRF token would be needed here if enabled for API and not globally ignored for /api/**
+                },
+                body: JSON.stringify({ quantity: newQuantity })
+            });
+
+            if (response.ok) {
+                try {
+                    const updatedItem = await response.json(); // Expecting JSON for the updated CartItem
+                    // Ensure the element still exists (e.g., user didn't switch pages/views rapidly)
+                    if (document.getElementById('quantity-display-' + updatedItem.id)) {
+                        document.getElementById('quantity-display-' + updatedItem.id).textContent = updatedItem.quantity;
+                    }
+                    // Provide a more informative success message based on which user's cart is hardcoded in API
+                    // DataInitializer.USER_ID_ALICE is 1L (Alice)
+                    const successMessage = currentSelectedUserId == 1 ?
+                        'Quantity updated successfully for item ID ' + itemId :
+                        'Quantity updated for item ID ' + itemId + ' (Note: Backend API currently targets User 1\'s cart).';
+                    displayGlobalMessage(successMessage, 'success');
+
+                } catch (jsonError) {
+                    // This block executes if response.ok is true, but response.json() fails
+                    console.error('Failed to parse JSON response even on OK status:', jsonError);
+                    const rawText = await response.text(); // Attempt to get raw text
+                    console.error('Raw response text (on OK status but JSON parse failed):', rawText);
+                    displayGlobalMessage('Error: Server sent OK but response was not valid JSON. Check console for raw response. Preview: ' + rawText.substring(0,200) + "...", 'error');
+                }
+            } else {
+                // Handle non-OK responses (4xx, 5xx errors)
+                let errorText = `Server error: ${response.status} ${response.statusText}`;
+                try {
+                    // Try to parse error response as JSON (many APIs send error details this way)
+                    const errorData = await response.json();
+                    errorText = errorData.message || JSON.stringify(errorData); // Use specific message if available
+                } catch (e) {
+                    // If error response is not JSON, use its raw text
+                    const rawErrorText = await response.text();
+                    console.error("Non-JSON error response body:", rawErrorText);
+                    errorText = rawErrorText.substring(0, 200) + "... (See console for full error)";
+                }
+                displayGlobalMessage('Error updating quantity: ' + errorText, 'error');
+            }
+        } catch (error) { // Catch network errors or other issues with the fetch itself
+            console.error('Network fetch error or issue in processing:', error);
+            displayGlobalMessage('Network error: ' + error.message, 'error');
+        }
+    }
+
+    function displayGlobalMessage(message, type) {
+        const messagesDiv = document.getElementById('globalMessages');
+        messagesDiv.textContent = message;
+        messagesDiv.className = 'messages ' + type;
+        messagesDiv.style.display = 'block';
+
+        setTimeout(() => {
+            messagesDiv.style.display = 'none';
+        }, 5000);
+    }
+
+    /*]]>*/
+</script>
+</body>
+</html>
