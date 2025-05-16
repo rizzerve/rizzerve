@@ -23,3 +23,17 @@ https://rizzerve-deploy.ambitiouswater-27e3bbd0.southeastasia.azurecontainerapps
 
 ## URL(s) to the technical documents (the initial design):
 https://docs.google.com/document/d/1XfDrTGUXtxLi6n77F-Ivzk7vgRkqt_4X4bSRE_sT4IQ/edit?usp=sharing
+
+## Our group's project current architecture
+
+### Context Diagram
+
+![](architectureDiagram/contextDiagram.png)
+
+### Container Diagram
+
+![](architectureDiagram/containerDiagram.png)
+
+### Deployment Diagram
+
+![](architectureDiagram/deploymentDiagram.png)
