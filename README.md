@@ -70,3 +70,12 @@ by Samuella Putri Nadia Pauntu - 2306170446
 
 #### COMPONENT DIAGRAM
 ![](architectureDiagram/componentRating.png)
+
+### Manage Menu Feature
+by Kezia Salsalina Agtyra Sebayang - 2306172086
+
+#### CODE DIAGRAM
+![](architectureDiagram/menuCode.png)
+
+#### COMPONENT DIAGRAM
+![](architectureDiagram/menucomponent.png)
