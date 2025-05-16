@@ -79,3 +79,12 @@ by Kezia Salsalina Agtyra Sebayang - 2306172086
 
 #### COMPONENT DIAGRAM
 ![](architectureDiagram/menucomponent.png)
+
+### Checkout Feature
+by Ferdinand Bonfilio Simamora - 2306256324
+
+#### COMPONENT DIAGRAM
+![](architectureDiagram/checkoutComponentDiagram.png)
+
+#### CODE DIAGRAM
+![](architectureDiagram/checkoutCodeDiagram.png)
