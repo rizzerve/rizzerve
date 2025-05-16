@@ -37,3 +37,19 @@ https://docs.google.com/document/d/1XfDrTGUXtxLi6n77F-Ivzk7vgRkqt_4X4bSRE_sT4IQ/
 ### Deployment Diagram
 
 ![](architectureDiagram/deploymentDiagram.png)
+
+## Our group's RISK ANALYSIS 
+![](architectureDiagram/riskanalysis.jpg)
+
+## Our group's project architecture after analysis
+### Context Diagram
+
+![](architectureDiagram/ContextDiagramAfter.png)
+
+### Container Diagram
+
+![](architectureDiagram/ContainerDiagramAfter.png)
+
+### Deployment Diagram
+
+![](architectureDiagram/deploymentDiagram.png)
