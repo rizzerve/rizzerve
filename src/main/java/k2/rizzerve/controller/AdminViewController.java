@@ -1,8 +1,6 @@
 package k2.rizzerve.controller;
 
 import k2.rizzerve.dto.AdminDto;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,15 +29,6 @@ public class AdminViewController {
     public String showEditForm(Model model) {
         model.addAttribute("adminDto", new AdminDto());
         return "admin/edit-profile";
-    }
-
-    @GetMapping("/dashboard")
-    public String dashboard(
-            Model model,
-            @AuthenticationPrincipal UserDetails user
-    ) {
-        model.addAttribute("username", user.getUsername());
-        return "admin/dashboard";
     }
 }
 
