@@ -2,26 +2,36 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>My Profile</title>
+    <title>Admin Profile</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
 </head>
 <body>
-<h1>Admin Profile</h1>
-<div>
-    <strong>Name:</strong> <span id="name"></span><br/>
-    <strong>Username:</strong> <span id="username"></span>
+
+<!-- Sidebar + Top Navbar -->
+<div th:replace="fragments/sidebar2 :: sidebar2"></div>
+<div th:replace="fragments/topnav :: topnav"></div>
+
+<div class="main-content">
+
+    <div class="profile-info">
+        <h1 style="text-align:center;">Admin Profile</h1>
+        <p><strong>Name:</strong> <span id="name"></span></p>
+        <p><strong>Username:</strong> <span id="username"></span></p>
+
+        <div class="form-buttons" style="justify-content: center;">
+            <a th:href="@{/admin/profile/editform}" class="add-button">✏️ Edit Profile</a>
+            <button id="deleteBtn" class="delete-btn">🗑️ Delete Account</button>
+            <button id="logoutBtn" class="edit-btn">🚪 Log Out</button>
+        </div>
+    </div>
 </div>
-<p>
-    <a th:href="@{/admin/profile/editform}">Edit Profile</a> |
-    <button id="deleteBtn">Delete Account</button> |
-    <button id="logoutBtn">Log Out</button>
-</p>
+
 
 <script>
-    // helper to detect JWT expiry
     function isTokenExpired(token) {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
-            return Date.now()/1000 > payload.exp;
+            return Date.now() / 1000 > payload.exp;
         } catch {
             return true;
         }
@@ -29,32 +39,21 @@
 
     const token = localStorage.getItem('jwtToken');
     if (!token || isTokenExpired(token)) {
-        alert('Please log in (or your session expired).');
+        alert('Please log in.');
         localStorage.removeItem('jwtToken');
         document.cookie = 'jwt=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
         window.location.href = '/admin/login';
     }
 
-    // load profile data
     fetch('/admin/profile', {
         headers: { 'Authorization': 'Bearer ' + token }
     })
-        .then(r => {
-            if (r.status === 403) throw 'forbidden';
-            return r.json();
-        })
+        .then(r => r.json())
         .then(data => {
             document.getElementById('name').innerText = data.name;
             document.getElementById('username').innerText = data.username;
-        })
-        .catch(() => {
-            alert('Not authorized—please log in again.');
-            localStorage.removeItem('jwtToken');
-            document.cookie = 'jwt=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-            window.location.href = '/admin/login';
         });
 
-    // delete account
     document.getElementById('deleteBtn').addEventListener('click', async () => {
         if (!confirm('Are you sure you want to delete your account?')) return;
         const resp = await fetch('/admin/profile', {
@@ -71,12 +70,12 @@
         }
     });
 
-    // logout
     document.getElementById('logoutBtn').addEventListener('click', () => {
         localStorage.removeItem('jwtToken');
         document.cookie = 'jwt=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
         window.location.href = '/admin/login';
     });
 </script>
+
 </body>
 </html>
