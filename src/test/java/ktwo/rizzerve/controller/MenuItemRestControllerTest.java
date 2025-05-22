@@ -1,10 +1,10 @@
-package k2.rizzerve.controller;
+package ktwo.rizzerve.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import k2.rizzerve.model.Category;
-import k2.rizzerve.model.MenuItem;
-import k2.rizzerve.service.CategoryService;
-import k2.rizzerve.service.MenuItemService;
+import ktwo.rizzerve.model.Category;
+import ktwo.rizzerve.model.MenuItem;
+import ktwo.rizzerve.service.CategoryService;
+import ktwo.rizzerve.service.MenuItemService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;

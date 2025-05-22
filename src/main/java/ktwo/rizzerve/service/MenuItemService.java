@@ -1,6 +1,6 @@
-package k2.rizzerve.service;
+package ktwo.rizzerve.service;
 
-import k2.rizzerve.model.MenuItem;
+import ktwo.rizzerve.model.MenuItem;
 import java.util.List;
 
 public interface MenuItemService {

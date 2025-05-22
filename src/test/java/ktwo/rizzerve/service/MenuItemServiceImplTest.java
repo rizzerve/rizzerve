@@ -1,7 +1,7 @@
-package k2.rizzerve.service;
+package ktwo.rizzerve.service;
 
-import k2.rizzerve.model.MenuItem;
-import k2.rizzerve.repository.MenuItemRepository;
+import ktwo.rizzerve.model.MenuItem;
+import ktwo.rizzerve.repository.MenuItemRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

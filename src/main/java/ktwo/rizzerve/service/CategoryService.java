@@ -1,6 +1,6 @@
-package k2.rizzerve.service;
+package ktwo.rizzerve.service;
 
-import k2.rizzerve.model.Category;
+import ktwo.rizzerve.model.Category;
 import java.util.List;
 
 public interface CategoryService {

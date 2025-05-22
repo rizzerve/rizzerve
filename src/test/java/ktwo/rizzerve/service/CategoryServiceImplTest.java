@@ -1,7 +1,7 @@
-package k2.rizzerve.service;
+package ktwo.rizzerve.service;
 
-import k2.rizzerve.model.Category;
-import k2.rizzerve.repository.CategoryRepository;
+import ktwo.rizzerve.model.Category;
+import ktwo.rizzerve.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

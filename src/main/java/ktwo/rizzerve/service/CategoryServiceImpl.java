@@ -1,7 +1,7 @@
-package k2.rizzerve.service;
+package ktwo.rizzerve.service;
 
-import k2.rizzerve.model.Category;
-import k2.rizzerve.repository.CategoryRepository;
+import ktwo.rizzerve.model.Category;
+import ktwo.rizzerve.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

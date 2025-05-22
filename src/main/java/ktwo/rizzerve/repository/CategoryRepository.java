@@ -1,6 +1,6 @@
-package k2.rizzerve.repository;
+package ktwo.rizzerve.repository;
 
-import k2.rizzerve.model.Category;
+import ktwo.rizzerve.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
-package k2.rizzerve.controller;
+package ktwo.rizzerve.controller;
 
-import k2.rizzerve.model.Category;
-import k2.rizzerve.service.CategoryService;
+import ktwo.rizzerve.model.Category;
+import ktwo.rizzerve.service.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

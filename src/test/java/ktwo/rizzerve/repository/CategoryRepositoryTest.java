@@ -1,6 +1,6 @@
-package k2.rizzerve.repository;
+package ktwo.rizzerve.repository;
 
-import k2.rizzerve.model.Category;
+import ktwo.rizzerve.model.Category;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

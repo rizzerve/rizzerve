@@ -1,4 +1,4 @@
-package k2.rizzerve.model;
+package ktwo.rizzerve.model;
 
 import org.junit.jupiter.api.Test;
 
