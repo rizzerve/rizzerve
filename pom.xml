@@ -8,7 +8,7 @@
 		<version>3.4.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>k2</groupId>
+	<groupId>ktwo</groupId>
 	<artifactId>rizzerve</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>rizzerve</name>
