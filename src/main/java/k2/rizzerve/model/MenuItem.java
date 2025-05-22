@@ -1,8 +1,9 @@
 package k2.rizzerve.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Builder;
+import jakarta.persistence.Table;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 @Getter
 @Entity
 @Table(name = "menu_items")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class MenuItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +32,10 @@ public class MenuItem {
 
     public MenuItem() { }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     private MenuItem(Builder b) {
         this.name        = b.name;
         this.price       = b.price;
@@ -38,7 +44,6 @@ public class MenuItem {
         this.category    = b.category;
     }
 
-    // Builder
     public static class Builder {
         private String name;
         private BigDecimal price;

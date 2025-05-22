@@ -1,6 +1,8 @@
 package k2.rizzerve.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,20 +10,18 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "categories")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Category {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     private String name;
 
     public Category(){}
     private Category(Builder b) {
         this.name = b.name;
     }
-
-    public Long getId() { return id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
 
     public static class Builder {
         private String name;
