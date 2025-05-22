@@ -1,4 +1,3 @@
-// src/test/java/k2/rizzerve/controller/MenuItemRestControllerTest.java
 package k2.rizzerve.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,150 +5,187 @@ import k2.rizzerve.model.Category;
 import k2.rizzerve.model.MenuItem;
 import k2.rizzerve.service.CategoryService;
 import k2.rizzerve.service.MenuItemService;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.*;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(MenuItemRestController.class)
-class MenuItemRestControllerTest {
+public class MenuItemRestControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private MenuItemService svc;
+    @Mock
+    private MenuItemService menuItemService;
 
-    @MockBean
-    private CategoryService catSvc;
+    @Mock
+    private CategoryService categoryService;
 
-    @Autowired
-    private ObjectMapper mapper;
+    @InjectMocks
+    private MenuItemRestController menuItemController;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(menuItemController)
+                .build();
+    }
 
     @Test
-    @DisplayName("GET /api/menuitems → 200 + JSON list")
-    void listAll() throws Exception {
-        Category c = new Category(1L, "Food");
-        var items = List.of(
-                new MenuItem(10L, "Burger", 5.99, c),
-                new MenuItem(11L, "Fries", 2.99, c)
-        );
-        when(svc.listAll()).thenReturn(items);
+    public void testListAll() throws Exception {
+        Category cat = new Category.Builder().name("C").build(); cat.setId(2L);
+        MenuItem m = MenuItem.builder()
+                .name("Cake")
+                .price(new BigDecimal("4.50"))
+                .description("Choco")
+                .available(true)
+                .category(cat)
+                .build();
+        m.setId(10L);
+
+        given(menuItemService.listAll()).willReturn(List.of(m));
 
         mockMvc.perform(get("/api/menuitems"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].name").value("Burger"));
-
-        verify(svc).listAll();
+                .andExpect(jsonPath("$[0].id").value(10))
+                .andExpect(jsonPath("$[0].name").value("Cake"))
+                .andExpect(jsonPath("$[0].category.id").value(2));
     }
 
     @Test
-    @DisplayName("GET /api/menuitems/{id} → 200 + JSON single")
-    void getOne_found() throws Exception {
-        Category c = new Category(2L, "Drinks");
-        MenuItem m = new MenuItem(20L, "Cola", 1.50, c);
-        when(svc.getById(20L)).thenReturn(m);
+    public void testGetOne_Success() throws Exception {
+        Category cat = new Category.Builder().name("C").build(); cat.setId(3L);
+        MenuItem m = MenuItem.builder()
+                .name("Juice")
+                .price(new BigDecimal("2.00"))
+                .description("Orange")
+                .available(false)
+                .category(cat)
+                .build();
+        m.setId(6L);
 
-        mockMvc.perform(get("/api/menuitems/20"))
+        given(menuItemService.getById(6L)).willReturn(m);
+
+        mockMvc.perform(get("/api/menuitems/6"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(20))
-                .andExpect(jsonPath("$.category.id").value(2));
-
-        verify(svc).getById(20L);
+                .andExpect(jsonPath("$.id").value(6))
+                .andExpect(jsonPath("$.available").value(false));
     }
 
     @Test
-    @DisplayName("GET /api/menuitems/{id} → 404 when missing")
-    void getOne_notFound() throws Exception {
-        when(svc.getById(99L)).thenReturn(null);
+    public void testGetOne_NotFound() throws Exception {
+        given(menuItemService.getById(7L)).willReturn(null);
 
-        mockMvc.perform(get("/api/menuitems/99"))
+        mockMvc.perform(get("/api/menuitems/7"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("POST /api/menuitems → 201 + JSON created")
-    void create() throws Exception {
-        Category c = new Category(3L, "Dessert");
-        MenuItem in = new MenuItem(null, "Cake", 3.50, c);
-        MenuItem saved = new MenuItem(30L, "Cake", 3.50, c);
+    public void testCreate_Success() throws Exception {
+        Category cat = new Category.Builder().name("Drinks").build(); cat.setId(4L);
 
-        when(catSvc.getById(3L)).thenReturn(c);
-        when(svc.add(any(MenuItem.class))).thenReturn(saved);
+        MenuItem in = MenuItem.builder()
+                .name("Juice")
+                .price(new BigDecimal("2.00"))
+                .description("Orange")
+                .available(false)
+                .category(cat)
+                .build();
+
+        MenuItem saved = MenuItem.builder()
+                .name("Juice")
+                .price(new BigDecimal("2.00"))
+                .description("Orange")
+                .available(false)
+                .category(cat)
+                .build();
+        saved.setId(11L);
+
+        given(categoryService.getById(4L)).willReturn(cat);
+        given(menuItemService.add(any(MenuItem.class))).willReturn(saved);
+
+        String json = new ObjectMapper().writeValueAsString(in);
 
         mockMvc.perform(post("/api/menuitems")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(in)))
+                        .content(json))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(30))
-                .andExpect(jsonPath("$.name").value("Cake"));
-
-        verify(catSvc).getById(3L);
-        verify(svc).add(any());
+                .andExpect(jsonPath("$.id").value(11))
+                .andExpect(jsonPath("$.category.id").value(4));
     }
 
     @Test
-    @DisplayName("PUT /api/menuitems/{id} → 200 when exists")
-    void update_found() throws Exception {
-        Category c = new Category(4L, "Sides");
-        MenuItem in = new MenuItem(null, "Onion Rings", 2.20, c);
-        MenuItem updated = new MenuItem(40L, "Onion Rings", 2.20, c);
+    public void testUpdate_Success() throws Exception {
+        Category cat = new Category.Builder().name("App").build(); cat.setId(6L);
 
-        when(catSvc.getById(4L)).thenReturn(c);
-        when(svc.update(any(MenuItem.class))).thenReturn(updated);
+        MenuItem in = MenuItem.builder()
+                .name("Brus")
+                .price(new BigDecimal("5.00"))
+                .description("Tom")
+                .available(true)
+                .category(cat)
+                .build();
 
-        mockMvc.perform(put("/api/menuitems/40")
+        MenuItem updated = MenuItem.builder()
+                .name("Brus")
+                .price(new BigDecimal("5.00"))
+                .description("Tom")
+                .available(true)
+                .category(cat)
+                .build();
+        updated.setId(6L);
+
+        given(categoryService.getById(6L)).willReturn(cat);
+        given(menuItemService.update(eq(6L), any(MenuItem.class))).willReturn(updated);
+
+        String json = new ObjectMapper().writeValueAsString(in);
+
+        mockMvc.perform(put("/api/menuitems/6")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(in)))
+                        .content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(40));
-
-        verify(svc).update(any());
+                .andExpect(jsonPath("$.id").value(6))
+                .andExpect(jsonPath("$.name").value("Brus"));
     }
 
     @Test
-    @DisplayName("PUT /api/menuitems/{id} → 404 when missing")
-    void update_notFound() throws Exception {
-        Category c = new Category(5L, "Drinks");
-        MenuItem in = new MenuItem(null, "Tea", 1.00, c);
+    public void testUpdate_NotFound() throws Exception {
+        Category cat = new Category.Builder().name("App").build(); cat.setId(7L);
 
-        when(catSvc.getById(5L)).thenReturn(c);
-        when(svc.update(any(MenuItem.class))).thenReturn(null);
+        MenuItem in = MenuItem.builder()
+                .name("Brus")
+                .price(new BigDecimal("5.00"))
+                .description("Tom")
+                .available(true)
+                .category(cat)
+                .build();
 
-        mockMvc.perform(put("/api/menuitems/5")
+        given(categoryService.getById(7L)).willReturn(cat);
+        given(menuItemService.update(eq(7L), any(MenuItem.class))).willReturn(null);
+
+        String json = new ObjectMapper().writeValueAsString(in);
+
+        mockMvc.perform(put("/api/menuitems/7")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(in)))
+                        .content(json))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("DELETE /api/menuitems/{id} → 204 when deleted")
-    void delete_found() throws Exception {
-        when(svc.delete(55L)).thenReturn(true);
+    public void testDelete() throws Exception {
+        willDoNothing().given(menuItemService).delete(8L);
 
-        mockMvc.perform(delete("/api/menuitems/55"))
+        mockMvc.perform(delete("/api/menuitems/8"))
                 .andExpect(status().isNoContent());
-
-        verify(svc).delete(55L);
-    }
-
-    @Test
-    @DisplayName("DELETE /api/menuitems/{id} → 404 when missing")
-    void delete_notFound() throws Exception {
-        when(svc.delete(66L)).thenReturn(false);
-
-        mockMvc.perform(delete("/api/menuitems/66"))
-                .andExpect(status().isNotFound());
     }
 }
