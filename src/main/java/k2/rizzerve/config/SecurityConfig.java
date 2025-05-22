@@ -1,7 +1,7 @@
-package k2.rizzerve.config;
+package ktwo.rizzerve.config;
 
-import k2.rizzerve.security.JwtAuthenticationFilter;
-import k2.rizzerve.service.AdminService;
+import ktwo.rizzerve.security.JwtAuthenticationFilter;
+import ktwo.rizzerve.service.AdminService;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -43,10 +43,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/login", "/admin/register").permitAll()
-                        .requestMatchers("/admin/**", "/categories/**",
-                                "/menus/**",
-                                "/api/categories/**",
-                                "/api/menuitems/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
