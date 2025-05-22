@@ -1,4 +1,4 @@
-// src/main/java/k2/rizzerve/controller/MenuItemRestController.java
+
 package k2.rizzerve.controller;
 
 import k2.rizzerve.model.Category;
@@ -53,7 +53,7 @@ public class MenuItemRestController {
         menuItem.setId(id);
         Category cat = catSvc.getById(menuItem.getCategory().getId());
         menuItem.setCategory(cat);
-        MenuItem updated = svc.update(menuItem);
+        MenuItem updated = svc.update(id, menuItem);
         return (updated != null)
                 ? ResponseEntity.ok(updated)
                 : ResponseEntity.notFound().build();
@@ -61,9 +61,7 @@ public class MenuItemRestController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        boolean ok = svc.delete(id);
-        return ok
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        svc.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

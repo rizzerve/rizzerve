@@ -57,7 +57,7 @@ public class CategoryRestController {
     @PutMapping("/{id}")
     public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody Category category) {
         category.setId(id); // ensure ID is set
-        Category updated = service.update(category);
+        Category updated = service.update(id, category);
         if (updated != null) {
             return ResponseEntity.ok(updated);
         }
@@ -70,10 +70,7 @@ public class CategoryRestController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        boolean deleted = service.delete(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
