@@ -42,4 +42,3 @@ public class AdminViewController {
         return "admin/dashboard";
     }
 }
-
