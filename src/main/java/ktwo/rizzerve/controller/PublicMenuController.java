@@ -1,12 +1,11 @@
-package k2.rizzerve.controller;
+package ktwo.rizzerve.controller;
 
-import k2.rizzerve.model.MenuItem;
-import k2.rizzerve.service.CategoryService;
-import k2.rizzerve.service.MenuItemService;
+import ktwo.rizzerve.model.MenuItem;
+import ktwo.rizzerve.service.CategoryService;
+import ktwo.rizzerve.service.MenuItemService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
