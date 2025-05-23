@@ -32,13 +32,4 @@ public class AdminViewController {
         model.addAttribute("adminDto", new AdminDto());
         return "admin/edit-profile";
     }
-
-    @GetMapping("/dashboard")
-    public String dashboard(
-            Model model,
-            @AuthenticationPrincipal UserDetails user
-    ) {
-        model.addAttribute("username", user.getUsername());
-        return "admin/dashboard";
-    }
 }
