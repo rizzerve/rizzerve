@@ -102,6 +102,16 @@ class AdminControllerTest {
     }
 
     @Test @Order(6)
+    void logoutShouldReturnRedirectMessageAndClearCookie() throws Exception {
+        mvc.perform(get("/admin/logout")
+                        .header("Authorization", "Bearer " + newToken))
+                .andExpect(status().isOk())
+                .andExpect(content().string("redirect:/admin/login"))
+                .andExpect(cookie().value("jwt", ""))
+                .andExpect(cookie().maxAge("jwt", 0));
+    }
+
+    @Test @Order(7)
     void deleteProfileWithNewTokenShouldReturnNoContent() throws Exception {
         mvc.perform(delete("/admin/profile")
                         .header("Authorization", "Bearer " + newToken))
@@ -109,4 +119,5 @@ class AdminControllerTest {
 
         assertThat(repo.findByUsername("newuser")).isEmpty();
     }
+
 }
