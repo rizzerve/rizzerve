@@ -1,65 +1,30 @@
 package ktwo.rizzerve.command;
 
+import ktwo.rizzerve.model.MenuItem;
 import ktwo.rizzerve.model.Rating;
 import ktwo.rizzerve.repository.RatingRepository;
-import ktwo.rizzerve.strategy.FiveStarRatingValidation;
+import ktwo.rizzerve.strategy.RatingValidationStrategy;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
-public class CreateRatingCommandTest {
-
-    @Test
-    void testExecuteCreatesValidRating() {
-        RatingRepository repository = new RatingRepository();
-
-        CreateRatingCommand command = new CreateRatingCommand(
-                "r1",
-                "P001",
-                "usn",
-                5,
-                new FiveStarRatingValidation(),
-                repository
-        );
-
-        Rating rating = command.execute();
-
-        assertEquals("r1", rating.getId());
-        assertEquals("P001", rating.getMenuId());
-        assertEquals("usn", rating.getUsername());
-        assertEquals(5, rating.getRatingValue());
-        assertSame(rating, repository.findById("r1"));
-    }
+class CreateRatingCommandTest {
 
     @Test
-    void testExecuteThrowsExceptionForTooHighValue() {
-        RatingRepository repository = new RatingRepository();
+    void testExecute() {
+        MenuItem menu = new MenuItem();
+        Rating expected = new Rating();
+        RatingRepository repo = mock(RatingRepository.class);
+        RatingValidationStrategy strategy = mock(RatingValidationStrategy.class);
 
-        CreateRatingCommand command = new CreateRatingCommand(
-                "r2",
-                "P002",
-                "usn",
-                10,
-                new FiveStarRatingValidation(),
-                repository
-        );
+        when(repo.save(any())).thenReturn(expected);
 
-        assertThrows(IllegalArgumentException.class, command::execute);
-    }
+        CreateRatingCommand cmd = new CreateRatingCommand(menu, "user", 4, strategy, repo);
+        Rating result = cmd.execute();
 
-    @Test
-    void testExecuteThrowsExceptionForNegativeValue() {
-        RatingRepository repository = new RatingRepository();
-
-        CreateRatingCommand command = new CreateRatingCommand(
-                "r3",
-                "P003",
-                "usn",
-                -1,
-                new FiveStarRatingValidation(),
-                repository
-        );
-
-        assertThrows(IllegalArgumentException.class, command::execute);
+        verify(strategy).validate(any());
+        verify(repo).save(any());
+        assertEquals(expected, result);
     }
 }
