@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rizzerve Menu</title>
+    <link rel="stylesheet" th:href="@{/css/menu.css}" />
+</head>
+<body>
+
+<div th:replace="fragments/sidebar :: sidebar"></div>
+
+<div th:replace="fragments/topnav :: topnav"></div>
+
+<div class="main-content">
+
+    <nav class="category-nav">
+        <ul>
+            <li th:each="cat : ${categories}" class="category-item">
+                <button type="button"
+                        th:attr="data-target=${'cat-' + cat.id}"
+                        th:text="${cat.name}"
+                        class="category-btn">
+                    Category
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <main>
+        <section th:each="cat : ${categories}" th:id="${'cat-' + cat.id}">
+            <h2 class="category-title" th:text="${cat.name}">Category Name</h2>
+
+            <div class="menu-grid">
+                <div class="menu-card" th:each="item : ${itemsByCategory[cat.id]}">
+                    <div class="menu-info">
+                        <p class="menu-name" th:text="${item.name}">Item Name</p>
+                        <p class="menu-price" th:text="'Rp ' + ${item.price}">Price</p>
+                        <p class="menu-description" th:text="${item.description}">Description</p>
+                        <p class="menu-availability"
+                           th:text="${item.available} ? '✅ Available' : '❌ Not Available'">Availability</p>
+                    </div>
+                    <div class="menu-action">
+                        <button th:if="${item.available}"
+                                class="add-btn"
+                                th:onclick="|window.location.href='/menuitems/' + ${item.id}|">
+                            ＋ Add
+                        </button>
+                        <button th:if="${!item.available}"
+                                class="add-btn disabled"
+                                disabled>
+                            ＋
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script th:src="@{/js/scroll.js}"></script>
+</body>
+</html>
