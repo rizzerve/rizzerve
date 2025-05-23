@@ -1,5 +1,7 @@
 package ktwo.rizzerve.strategy;
 
+import ktwo.rizzerve.model.Rating;
+
 public interface RatingValidationStrategy {
-    boolean isValid(int value);
+    void validate(Rating rating);
 }
