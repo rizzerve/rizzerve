@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Welcome</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f7f7f7;
+            text-align: center;
+            padding-top: 10vh;
+        }
+        .container {
+            background: white;
+            display: inline-block;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        button {
+            margin: 1rem;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .admin { background: #007bff; color: white; }
+        .user { background: #28a745; color: white; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Welcome!</h1>
+    <p>Select your role:</p>
+    <button class="admin" onclick="location.href='/admin/login'">Admin</button>
+    <button class="user" onclick="location.href='/user/input'">User</button>
+</div>
+</body>
+</html>

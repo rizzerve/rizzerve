@@ -1,66 +1,54 @@
 package ktwo.rizzerve.service;
 
-import ktwo.rizzerve.command.CreateRatingCommand;
-import ktwo.rizzerve.command.DeleteRatingCommand;
-import ktwo.rizzerve.command.UpdateRatingCommand;
+import ktwo.rizzerve.command.RatingCommand;
 import ktwo.rizzerve.model.Rating;
 import ktwo.rizzerve.repository.RatingRepository;
-import ktwo.rizzerve.strategy.FiveStarRatingValidation;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class RatingServiceImplTest {
 
-    private RatingService service;
-    private RatingRepository repository;
+    RatingRepository repo = mock(RatingRepository.class);
+    RatingServiceImpl service = new RatingServiceImpl(repo);
 
-    @BeforeEach
-    void setUp() {
-        repository = new RatingRepository();
-        service = new RatingServiceImpl(repository);
+    @Test
+    void testExecuteCommand() {
+        RatingCommand cmd = mock(RatingCommand.class);
+        Rating expected = new Rating();
+        when(cmd.execute()).thenReturn(expected);
+
+        Rating result = service.executeCommand(cmd);
+        assertEquals(expected, result);
     }
 
     @Test
-    void testCreateRating() {
-        CreateRatingCommand command = new CreateRatingCommand(
-                "r1",
-                "M001",
-                "usn",
-                5,
-                new FiveStarRatingValidation(),
-                repository
-        );
+    void testGetAll() {
+        List<Rating> ratings = Arrays.asList(new Rating(), new Rating());
+        when(repo.findAll()).thenReturn(ratings);
 
-        service.executeCommand(command);
-        Rating saved = repository.findById("r1");
-        assertNotNull(saved);
-        assertEquals(5, saved.getRatingValue());
+        assertEquals(2, service.getAll().size());
     }
 
     @Test
-    void testUpdateRating() {
-        Rating original = new Rating("r2", "M001", "usn", 2, new FiveStarRatingValidation());
-        repository.save(original);
+    void testGetById() {
+        UUID id = UUID.randomUUID();
+        Rating r = new Rating();
+        when(repo.findById(id)).thenReturn(Optional.of(r));
 
-        Rating updated = new Rating("r2", "M001", "usn", 4, new FiveStarRatingValidation());
-        UpdateRatingCommand command = new UpdateRatingCommand("r2", updated, repository);
-        service.executeCommand(command);
-
-        Rating result = repository.findById("r2");
-        assertNotNull(result);
-        assertEquals(4, result.getRatingValue());
+        assertEquals(r, service.getById(id.toString()));
     }
 
     @Test
-    void testDeleteRating() {
-        Rating rating = new Rating("r3", "M001", "usn", 3, new FiveStarRatingValidation());
-        repository.save(rating);
-
-        DeleteRatingCommand command = new DeleteRatingCommand("r3", repository);
-        service.executeCommand(command);
-
-        assertNull(repository.findById("r3"));
+    void testGetByMenu() {
+        when(repo.findByMenuItem_Id(1L)).thenReturn(List.of(new Rating()));
+        assertEquals(1, service.getByMenu("1").size());
     }
 }

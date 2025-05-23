@@ -2,46 +2,37 @@ package ktwo.rizzerve.command;
 
 import ktwo.rizzerve.model.Rating;
 import ktwo.rizzerve.repository.RatingRepository;
-import ktwo.rizzerve.strategy.FiveStarRatingValidation;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class UpdateRatingCommandTest {
 
-    private RatingRepository repository;
+    @Test
+    void testExecute_WhenExists() {
+        UUID id = UUID.randomUUID();
+        Rating updated = new Rating();
+        RatingRepository repo = mock(RatingRepository.class);
 
-    @BeforeEach
-    void setUp() {
-        repository = new RatingRepository();
-        Rating rating = new Rating("r1", "P001", "usn", 3, new FiveStarRatingValidation());
-        repository.save(rating);
+        when(repo.existsById(id)).thenReturn(true);
+        when(repo.save(updated)).thenReturn(updated);
+
+        UpdateRatingCommand cmd = new UpdateRatingCommand(id.toString(), updated, repo);
+        Rating result = cmd.execute();
+
+        assertEquals(updated, result);
     }
 
     @Test
-    void testUpdateRatingSuccess() {
-        UpdateRatingCommand command = new UpdateRatingCommand(
-                "r1",
-                new Rating("r1", "P001", "usn", 5, new FiveStarRatingValidation()),
-                repository
-        );
+    void testExecute_WhenNotExists() {
+        UUID id = UUID.randomUUID();
+        RatingRepository repo = mock(RatingRepository.class);
+        when(repo.existsById(id)).thenReturn(false);
 
-        command.execute();
-
-        Rating updated = repository.findById("r1");
-        assertNotNull(updated);
-        assertEquals(5, updated.getRatingValue());
-    }
-
-    @Test
-    void testUpdateRatingNotFound() {
-        UpdateRatingCommand command = new UpdateRatingCommand(
-                "nonexistent",
-                new Rating("nonexistent", "P002", "someone", 4, new FiveStarRatingValidation()),
-                repository
-        );
-
-        assertThrows(IllegalArgumentException.class, command::execute);
+        UpdateRatingCommand cmd = new UpdateRatingCommand(id.toString(), new Rating(), repo);
+        assertNull(cmd.execute());
     }
 }

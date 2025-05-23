@@ -6,6 +6,7 @@ import ktwo.rizzerve.repository.RatingRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class RatingServiceImpl implements RatingService {
@@ -27,11 +28,11 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public Rating getById(String id) {
-        return repository.findById(id);
+        return repository.findById(UUID.fromString(id)).orElse(null);
     }
 
     @Override
     public List<Rating> getByMenu(String menuId) {
-        return repository.findByMenuId(menuId);
+        return repository.findByMenuItem_Id(Long.valueOf(menuId));
     }
 }

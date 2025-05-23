@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Rate a Dish</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2rem;
+            background: #f4f4f4;
+        }
+
+        .form-container {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        label, input, select, button {
+            display: block;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 0.6rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            background: #f1f1f1;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem;
+            border-radius: 4px;
+        }
+
+        .btn-small {
+            display: inline-block;
+            width: auto;
+            margin-left: 0.5rem;
+            padding: 0.3rem 0.6rem;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h2>Rate a Dish</h2>
+
+    <form id="ratingForm">
+        <label for="menuId">Menu</label>
+        <select id="menuId" required>
+            <option value="" disabled selected>Select a menu</option>
+        </select>
+
+        <label for="username">Username</label>
+        <input id="username" type="text" readonly />
+
+        <label for="ratingValue">Rating (1–5)</label>
+        <input id="ratingValue" type="number" min="1" max="5" required />
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <h3>All Ratings</h3>
+    <ul id="ratingList"></ul>
+</div>
+
+<script>
+    const menuId = document.getElementById('menuId');
+    const usernameInput = document.getElementById('username');
+    const ratingValue = document.getElementById('ratingValue');
+    const ratingList = document.getElementById('ratingList');
+    const storedUsername = localStorage.getItem('username') || '';
+    usernameInput.value = storedUsername;
+
+    async function loadMenus() {
+        try {
+            const res = await fetch('/api/menuitems');
+            const menus = await res.json();
+
+            menuId.innerHTML = '<option value="" disabled selected>Select a menu</option>';
+            menus.forEach(menu => {
+                const opt = document.createElement('option');
+                opt.value = menu.id;
+                opt.textContent = menu.name;
+                menuId.appendChild(opt);
+            });
+        } catch (err) {
+            console.error('Failed to load menus', err);
+        }
+    }
+
+    async function loadRatings() {
+        try {
+            const res = await fetch('/api/ratings');
+            const ratings = await res.json();
+            ratingList.innerHTML = '';
+            ratings.forEach(r => {
+                const menuName = r.menuItem && r.menuItem.name ? r.menuItem.name : 'Unknown';
+                const li = document.createElement('li');
+                li.dataset.id = r.id;
+                li.innerHTML = `${r.username} rated ${menuName} → ${r.ratingValue}`;
+
+                if (r.username === usernameInput.value) {
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'btn-small btn-edit';
+                    editBtn.textContent = 'Edit';
+                    editBtn.onclick = () => {
+                        window.location.href = `/edit?id=${r.id}`;
+                    };
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'btn-small btn-delete';
+                    delBtn.textContent = 'Delete';
+                    delBtn.onclick = async () => {
+                        await fetch(`/api/ratings/${r.id}`, { method: 'DELETE' });
+                        await loadRatings();
+                    };
+
+                    li.appendChild(editBtn);
+                    li.appendChild(delBtn);
+                }
+
+                ratingList.appendChild(li);
+            });
+        } catch (err) {
+            console.error('Failed to load ratings', err);
+        }
+    }
+
+    document.getElementById('ratingForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const payload = {
+            menuId: menuId.value,
+            username: usernameInput.value,
+            ratingValue: parseInt(ratingValue.value)
+        };
+
+        try {
+            await fetch('/api/ratings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            e.target.reset();
+            usernameInput.value = storedUsername;
+            await loadRatings();
+        } catch (err) {
+            console.error('Failed to submit rating', err);
+        }
+    });
+
+    loadMenus();
+    loadRatings();
+</script>
+</body>
+</html>

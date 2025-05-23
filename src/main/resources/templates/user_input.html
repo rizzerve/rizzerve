@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enter Username</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f2f2f2;
+            text-align: center;
+            padding-top: 10vh;
+        }
+        .box {
+            background: white;
+            display: inline-block;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, button {
+            padding: 0.75rem;
+            margin-top: 1rem;
+            font-size: 1rem;
+            width: 100%;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>Enter Your Username</h2>
+    <input type="text" id="username" placeholder="Username" required />
+    <button onclick="goToHome()">Continue</button>
+</div>
+
+<script>
+    function goToHome() {
+        const uname = document.getElementById('username').value.trim();
+        if (uname !== '') {
+            localStorage.setItem('username', uname);
+            location.href = '/home';
+        } else {
+            alert("Username is required!");
+        }
+    }
+</script>
+</body>
+</html>
