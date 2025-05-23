@@ -3,6 +3,7 @@ package ktwo.rizzerve.config;
 import ktwo.rizzerve.security.JwtAuthenticationFilter;
 import ktwo.rizzerve.service.AdminService;
 import org.springframework.context.annotation.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -43,6 +44,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/login", "/admin/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/categories", "/api/menuitems").permitAll()
                         .requestMatchers("/admin/**", "/categories/**",
                                 "/menus/**",
                                 "/api/categories/**",
