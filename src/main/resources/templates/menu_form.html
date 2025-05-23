@@ -18,23 +18,23 @@
         <input type="hidden" th:field="*{id}" />
 
         <div class="form-group">
-            <label>Name</label>
-            <input type="text" th:field="*{name}" required />
+            <label for="menuName">Name</label>
+            <input id="menuName" type="text" th:field="*{name}" required />
         </div>
 
         <div class="form-group">
-            <label>Price</label>
-            <input type="number" step="0.01" th:field="*{price}" required />
+            <label for="menuPrice">Price</label>
+            <input id="menuPrice" type="number" step="0.01" th:field="*{price}" required />
         </div>
 
         <div class="form-group">
-            <label>Description</label>
-            <textarea th:field="*{description}"></textarea>
+            <label for="menuDescription">Description</label>
+            <textarea id="menuDescription" th:field="*{description}"></textarea>
         </div>
 
         <div class="form-group">
-            <label>Category</label>
-            <select th:field="*{category.id}" required>
+            <label for="menuCategory">Category</label>
+            <select id="menuCategory" th:field="*{category.id}" required>
                 <option value="" disabled>--Choose Category--</option>
                 <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
             </select>

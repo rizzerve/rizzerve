@@ -11,6 +11,7 @@
 <div th:replace="fragments/sidebar2 :: sidebar2"></div>
 <div th:replace="fragments/topnav :: topnav"></div>
 
+
 <!-- Content -->
 <div class="main-content">
     <div class="page-header">
@@ -18,26 +19,71 @@
         <a class="add-button" th:href="@{/menus/new}">＋ Add New Item</a>
         <a class="add-button" style="background-color:#6c5ce7;" th:href="@{/categories}">📂 Manage Categories</a>
     </div>
+    <div class="search-bar">
+        <label for="menu-search" class="sr-only">Search Menu</label>
+        <input type="text" id="menu-search" placeholder="Search..." />
+    </div>
 
     <div class="menu-grid">
-        <div class="menu-card" th:each="item : ${menus}">
-            <div class="menu-info">
-                <p class="menu-name" th:text="${item.name}">Item Name</p>
-                <p class="menu-price" th:text="'Rp ' + ${item.price}">Price</p>
-                <p class="menu-description" th:text="${item.description}">Description</p>
-                <p class="menu-availability" th:text="${item.available} ? '✅ Available' : '❌ Not Available'">Availability</p>
-                <p class="menu-category" th:text="'Category: ' + ${item.category.name}">Category</p>
-            </div>
-
-            <div class="admin-actions">
-                <a th:href="@{/menus/{id}/edit(id=${item.id})}" class="edit-btn">✏️ Edit</a>
-                <form th:action="@{/menus/{id}/delete(id=${item.id})}" method="post" onsubmit="return confirm('Delete this item?')" style="display:inline;">
-                    <button type="submit" class="delete-btn">🗑️ Delete</button>
-                </form>
-            </div>
-        </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const menuGrid = document.querySelector(".menu-grid");
+        const searchInput = document.getElementById("menu-search");
+
+        function loadMenus() {
+            fetch("/api/menuitems")
+                .then(res => res.json())
+                .then(data => {
+                    menuGrid.innerHTML = "";
+
+                    data.forEach(item => {
+                        const card = document.createElement("div");
+                        card.className = "menu-card";
+                        card.innerHTML = `
+                            <div class="menu-info">
+                                <p class="menu-name">${item.name}</p>
+                                <p class="menu-price">Rp ${item.price}</p>
+                                <p class="menu-description">${item.description}</p>
+                                <p class="menu-availability">${item.available ? "✅ Available" : "❌ Not Available"}</p>
+                                <p class="menu-category">Category: ${item.category.name}</p>
+                            </div>
+                            <div class="admin-actions">
+                                <a href="/menus/${item.id}/edit" class="edit-btn">✏️ Edit</a>
+                                <button data-id="${item.id}" class="delete-btn">🗑️ Delete</button>
+                            </div>
+                        `;
+                        menuGrid.appendChild(card);
+                    });
+
+                    // Set up delete button listeners
+                    document.querySelectorAll(".delete-btn").forEach(btn => {
+                        btn.addEventListener("click", e => {
+                            const id = e.target.getAttribute("data-id");
+                            if (confirm("Delete this item?")) {
+                                fetch(`/api/menuitems/${id}`, { method: "DELETE" })
+                                    .then(() => loadMenus());
+                            }
+                        });
+                    });
+
+                    searchInput.addEventListener("input", () => {
+                        const query = searchInput.value.toLowerCase();
+                        document.querySelectorAll(".menu-card").forEach(card => {
+                            const name = card.querySelector(".menu-name")?.textContent.toLowerCase() || "";
+                            const desc = card.querySelector(".menu-description")?.textContent.toLowerCase() || "";
+                            const match = name.includes(query) || desc.includes(query);
+                            card.style.display = match ? "block" : "none";
+                        });
+                    });
+                });
+        }
+
+        loadMenus();
+    });
+</script>
 
 </body>
 </html>
