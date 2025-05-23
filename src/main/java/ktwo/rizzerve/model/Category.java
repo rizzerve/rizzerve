@@ -1,6 +1,6 @@
 package ktwo.rizzerve.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -12,13 +12,18 @@ import lombok.Setter;
 @Table(name = "categories")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Category {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
     private String name;
 
-    public Category(){}
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private java.util.List<MenuItem> menuItems = new java.util.ArrayList<>();
+
+    public Category() {}
+
     private Category(Builder b) {
         this.name = b.name;
     }
