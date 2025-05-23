@@ -1,72 +1,54 @@
 package ktwo.rizzerve.repository;
 
+import ktwo.rizzerve.model.MenuItem;
 import ktwo.rizzerve.model.Rating;
-import ktwo.rizzerve.strategy.FiveStarRatingValidation;
-import org.junit.jupiter.api.BeforeEach;
+import ktwo.rizzerve.strategy.RatingValidationStrategy;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DataJpaTest
 class RatingRepositoryTest {
 
-    private RatingRepository repository;
-    private Rating rating;
+    @Autowired
+    private RatingRepository ratingRepository;
 
-    @BeforeEach
-    void setUp() {
-        repository = new RatingRepository();
-        rating = new Rating("r1", "M001", "usn", 4, new FiveStarRatingValidation());
-        repository.save(rating);
+    @Autowired
+    private MenuItemRepository menuItemRepository;
+
+    @Test
+    void findByMenuItem_Id_shouldReturnRatings() {
+        MenuItem menu = new MenuItem();
+        menu.setName("Nasi Goreng");
+        menu.setPrice(BigDecimal.valueOf(25000));
+        menu.setDescription("Sigma");
+        menu.setAvailable(true);
+        menu.setCategory(null);
+        menu = menuItemRepository.save(menu);
+
+        RatingValidationStrategy strategy = r -> {}; // dummy validation
+        Rating rating = new Rating(menu, "okkk", 4, strategy);
+        ratingRepository.save(rating);
+
+        // When
+        List<Rating> found = ratingRepository.findByMenuItem_Id(menu.getId());
+
+        // Then
+        assertEquals(1, found.size());
+        assertEquals("okkk", found.get(0).getUsername());
+        assertEquals(4, found.get(0).getRatingValue());
+        assertEquals(menu.getId(), found.get(0).getMenuItem().getId());
     }
 
     @Test
-    void testFindByIdReturnsRating() {
-        Rating found = repository.findById("r1");
-        assertNotNull(found);
-        assertEquals("M001", found.getMenuId());
+    void findByMenuItem_Id_shouldReturnEmpty_whenNoMatch() {
+        List<Rating> result = ratingRepository.findByMenuItem_Id(999L);
+        assertTrue(result.isEmpty());
     }
-
-    @Test
-    void testFindAllReturnsList() {
-        List<Rating> ratings = repository.findAll();
-        assertEquals(1, ratings.size());
-    }
-
-    @Test
-    void testFindByMenuIdReturnsCorrectRatings() {
-        List<Rating> ratings = repository.findByMenuId("M001");
-        assertEquals(1, ratings.size());
-        assertEquals("r1", ratings.get(0).getId());
-    }
-
-    @Test
-    void testDeleteByIdRemovesRating() {
-        repository.deleteById("r1");
-        assertNull(repository.findById("r1"));
-    }
-
-    @Test
-    void testExistsByIdReturnsTrue() {
-        assertTrue(repository.existsById("r1"));
-    }
-
-    @Test
-    void testExistsByIdReturnsFalse() {
-        assertFalse(repository.existsById("r999"));
-    }
-
-    @Test
-    void testUpdateRating() {
-        Rating oldRating = new Rating("r8", "M001", "usn", 3, new FiveStarRatingValidation());
-        repository.save(oldRating);
-
-        Rating newRating = new Rating("r8", "M001", "usn", 5, new FiveStarRatingValidation());
-        repository.update("r8", newRating);
-
-        Rating result = repository.findById("r8");
-        assertEquals(5, result.getRatingValue());
-    }
-
 }
