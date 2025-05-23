@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Categories</title>
+    <link rel="stylesheet" th:href="@{/css/menu.css}" />
+</head>
+<body>
+
+<!-- Sidebar + Top Nav -->
+<div th:replace="fragments/sidebar2 :: sidebar2"></div>
+<div th:replace="fragments/topnav :: topnav"></div>
+
+<div class="main-content">
+    <div class="page-header">
+        <h1>Manage Categories</h1>
+        <a class="add-button" th:href="@{/categories/new}">＋ Add Category</a>
+    </div>
+
+    <div class="menu-grid">
+        <div class="menu-card" th:each="c : ${categories}">
+            <p class="menu-name" th:text="${c.name}">Category</p>
+
+            <div class="admin-actions">
+                <a th:href="@{/categories/{id}/edit(id=${c.id})}" class="edit-btn">✏️ Edit</a>
+                <form th:action="@{/categories/{id}/delete(id=${c.id})}" method="post" style="display:inline;" onsubmit="return confirm('Delete category?')">
+                    <button type="submit" class="delete-btn">🗑️ Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

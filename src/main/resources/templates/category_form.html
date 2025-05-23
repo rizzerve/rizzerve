@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${category.id} == null ? 'Add Category' : 'Edit Category'">Category Form</title>
+    <link rel="stylesheet" th:href="@{/css/menu.css}" />
+</head>
+<body>
+
+<!-- Sidebar + Top Nav -->
+<div th:replace="fragments/sidebar2 :: sidebar2"></div>
+<div th:replace="fragments/topnav :: topnav"></div>
+
+<div class="main-content">
+    <h1 th:text="${category.id} == null ? 'Add Category' : 'Edit Category'">Form</h1>
+
+    <form th:action="@{/categories}" th:object="${category}" method="post" class="menu-form">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="form-group">
+            <label>Category Name</label>
+            <input type="text" th:field="*{name}" required/>
+        </div>
+
+        <div class="form-buttons">
+            <button type="submit" class="add-button">Save</button>
+            <a th:href="@{/categories}" class="cancel-link">Cancel</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
