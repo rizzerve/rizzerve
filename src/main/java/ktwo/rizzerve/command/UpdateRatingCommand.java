@@ -3,25 +3,22 @@ package ktwo.rizzerve.command;
 import ktwo.rizzerve.model.Rating;
 import ktwo.rizzerve.repository.RatingRepository;
 
-import java.util.NoSuchElementException;
+import java.util.UUID;
 
 public class UpdateRatingCommand implements RatingCommand {
-    private final String id;
     private final Rating updated;
-    private final RatingRepository repo;
+    private final RatingRepository repository;
+    private final UUID id;
 
-    public UpdateRatingCommand(String id, Rating updated, RatingRepository repo) {
-        this.id = id;
+    public UpdateRatingCommand(String id, Rating updated, RatingRepository repository) {
+        this.id = UUID.fromString(id);
         this.updated = updated;
-        this.repo = repo;
+        this.repository = repository;
     }
 
     @Override
     public Rating execute() {
-        if (!repo.existsById(id)) {
-            throw new NoSuchElementException("Rating "+id+" not found");
-        }
-        repo.update(id, updated);
-        return updated;
+        if (!repository.existsById(id)) return null;
+        return repository.save(updated);
     }
 }
