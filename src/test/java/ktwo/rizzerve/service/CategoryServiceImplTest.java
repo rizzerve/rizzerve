@@ -1,5 +1,6 @@
 package ktwo.rizzerve.service;
 
+import ktwo.rizzerve.controller.MenuUpdateSSEController;
 import ktwo.rizzerve.model.Category;
 import ktwo.rizzerve.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,9 @@ class CategoryServiceImplTest {
 
     @Mock
     private CategoryRepository repo;
+
+    @Mock
+    private MenuUpdateSSEController sseController;
 
     @InjectMocks
     private CategoryServiceImpl service;
@@ -91,9 +95,9 @@ class CategoryServiceImplTest {
 
         assertThat(updated.getName()).isEqualTo("Updated");
 
-        // ensure save was called on the instance after name change
         ArgumentCaptor<Category> captor = ArgumentCaptor.forClass(Category.class);
         verify(repo).save(captor.capture());
+        verify(sseController).notifyAllClients();
         assertThat(captor.getValue().getName()).isEqualTo("Updated");
     }
 
@@ -112,5 +116,6 @@ class CategoryServiceImplTest {
         service.delete(2L);
 
         verify(repo).deleteById(2L);
+        verify(sseController).notifyAllClients();
     }
 }

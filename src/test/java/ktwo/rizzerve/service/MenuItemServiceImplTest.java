@@ -1,5 +1,6 @@
 package ktwo.rizzerve.service;
 
+import ktwo.rizzerve.controller.MenuUpdateSSEController;
 import ktwo.rizzerve.model.MenuItem;
 import ktwo.rizzerve.repository.MenuItemRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,11 +20,14 @@ class MenuItemServiceImplTest {
     @Mock
     private MenuItemRepository repo;
 
+    @Mock
+    private MenuUpdateSSEController sseController;
+
     private MenuItemServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new MenuItemServiceImpl(repo);
+        service = new MenuItemServiceImpl(repo, sseController);
     }
 
     @Test
@@ -39,6 +43,7 @@ class MenuItemServiceImplTest {
 
         assertThat(result).isSameAs(item);
         verify(repo).save(item);
+        verify(sseController).notifyAllClients(); // SSE triggered
     }
 
     @Test
@@ -76,7 +81,7 @@ class MenuItemServiceImplTest {
     }
 
     @Test
-    void update_ShouldModifyAndSave() {
+    void update_ShouldModifyAndSaveAndTriggerSSE() {
         MenuItem existing = new MenuItem.Builder()
                 .name("Old")
                 .price(BigDecimal.ONE)
@@ -91,18 +96,23 @@ class MenuItemServiceImplTest {
                 .description("Baru")
                 .available(false)
                 .build();
+
         var updated = service.update(1L, data);
 
         assertThat(updated.getName()).isEqualTo("New");
         assertThat(updated.getPrice()).isEqualByComparingTo("5000");
         assertThat(updated.getDescription()).isEqualTo("Baru");
         assertThat(updated.isAvailable()).isFalse();
+
         verify(repo).save(existing);
+        verify(sseController).notifyAllClients();
     }
 
     @Test
-    void delete_ShouldCallRepo() {
+    void delete_ShouldCallRepoAndTriggerSSE() {
         service.delete(3L);
+
         verify(repo).deleteById(3L);
+        verify(sseController).notifyAllClients();
     }
 }
