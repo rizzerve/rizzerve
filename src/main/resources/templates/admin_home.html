@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>RIZZerve | Admin Home</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}" />
+    <link rel="stylesheet" th:href="@{/css/menu.css}" />
+</head>
+<body>
+
+<!-- Top Navbar -->
+<div th:replace="fragments/topnav :: topnav"></div>
+
+<!-- Sidebar for Admins -->
+<div th:replace="fragments/sidebar2 :: sidebar2"></div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="home-welcome">
+        <h1>Welcome to RIZZerve,<span th:text="${username}">Admin</span></h1>
+        <p>You are logged in as <strong>Admin</strong>. Manage your restaurant below:</p>
+
+        <div class="quick-links">
+            <a class="quick-card" th:href="@{/menus}">📋Manage Menu and Categories</a>
+            <a class="quick-card" th:href="@{/tables}">🪑 Manage Tables</a>
+            <a class="quick-card" th:href="@{/admin/orders}">📊 Order History</a>
+            <a class="quick-card" th:href="@{/admin/profile/view}">👤 Manage Profile</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
