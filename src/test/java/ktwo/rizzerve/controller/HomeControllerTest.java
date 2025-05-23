@@ -6,10 +6,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get; // ⬅️ you missed this
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status; // ⬅️ this too
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
 @WebMvcTest(HomeController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -19,17 +18,24 @@ class HomeControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    void testPublicHomePage_Unauthenticated() throws Exception {
+    void testLandingPage() throws Exception {
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("index"));
+    }
+
+    @Test
+    void testUserHomePage() throws Exception {
         mockMvc.perform(get("/home"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("home"));
     }
 
     @Test
-    void testPublicHomePage_Authenticated() throws Exception {
-        mockMvc.perform(get("/home").principal(() -> "user"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("admin/home"));
+    void testUserInputPage() throws Exception {
+        mockMvc.perform(get("/user/input"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user_input"));
     }
 
     @Test
