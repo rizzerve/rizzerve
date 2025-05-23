@@ -1,8 +1,10 @@
 package ktwo.rizzerve.web;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class CreateRatingRequest {
     private String id;
     private String menuId;
