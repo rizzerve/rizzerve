@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Edit Rating</title>
+    <title>Edit Rating (Per Menu)</title>
     <style>
         body {
             font-family: sans-serif;
@@ -57,7 +57,6 @@
 <script>
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
-    const from = params.get("from");
 
     const menuName = document.getElementById("menuName");
     const username = document.getElementById("username");
@@ -96,11 +95,7 @@
                 body: JSON.stringify(payload)
             });
 
-            if (from === "menu") {
-                window.location.href = `/rate/menu?menuId=${menuIdForRedirect}`;
-            } else {
-                window.location.href = "/rate";
-            }
+            window.location.href = `/rate/menu?menuId=${menuIdForRedirect}`;
         } catch (err) {
             alert("Update failed. Please try again.");
         }
