@@ -67,6 +67,12 @@
             background-color: #dc3545;
             color: white;
         }
+
+        .error-msg {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -85,6 +91,8 @@
         <label for="ratingValue">Rating (1–5)</label>
         <input id="ratingValue" type="number" min="1" max="5" required />
 
+        <div id="errorMsg" class="error-msg"></div>
+
         <button type="submit">Submit</button>
     </form>
 
@@ -97,6 +105,7 @@
     const usernameInput = document.getElementById('username');
     const ratingValue = document.getElementById('ratingValue');
     const ratingList = document.getElementById('ratingList');
+    const errorMsg = document.getElementById('errorMsg');
     const storedUsername = localStorage.getItem('username') || '';
     usernameInput.value = storedUsername;
 
@@ -123,7 +132,7 @@
             const ratings = await res.json();
             ratingList.innerHTML = '';
             ratings.forEach(r => {
-                const menuName = r.menuItem && r.menuItem.name ? r.menuItem.name : 'Unknown';
+                const menuName = r.menuItem?.name || 'Unknown';
                 const li = document.createElement('li');
                 li.dataset.id = r.id;
                 li.innerHTML = `${r.username} rated ${menuName} → ${r.ratingValue}`;
@@ -157,6 +166,8 @@
 
     document.getElementById('ratingForm').addEventListener('submit', async function (e) {
         e.preventDefault();
+        errorMsg.textContent = '';
+
         const payload = {
             menuId: menuId.value,
             username: usernameInput.value,
@@ -164,16 +175,23 @@
         };
 
         try {
-            await fetch('/api/ratings', {
+            const res = await fetch('/api/ratings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            e.target.reset();
-            usernameInput.value = storedUsername;
-            await loadRatings();
+
+            if (res.status === 409) {
+                errorMsg.textContent = "⚠️ You have already rated this menu!";
+            } else if (!res.ok) {
+                errorMsg.textContent = "⚠️ Failed to submit rating.";
+            } else {
+                e.target.reset();
+                usernameInput.value = storedUsername;
+                await loadRatings();
+            }
         } catch (err) {
-            console.error('Failed to submit rating', err);
+            errorMsg.textContent = "⚠️ Submission error. Please try again.";
         }
     });
 
