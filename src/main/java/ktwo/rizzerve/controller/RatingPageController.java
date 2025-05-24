@@ -15,4 +15,14 @@ public class RatingPageController {
     public String showEditPage() {
         return "edit";
     }
+
+    @GetMapping("/rate/menu")
+    public String menuRatingPage() {
+        return "rating_menu";
+    }
+
+    @GetMapping("/edit-menu")
+    public String showEditMenuPage() {
+        return "edit_menu";
+    }
 }
