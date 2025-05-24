@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 37,
+  "version": 1,
+  "title": "Table Metrics",
+  "id": null,
+  "panels": [
+    {
+      "datasource": "Prometheus",
+      "type": "timeseries",
+      "title": "Tables Created per Minute",
+      "targets": [
+        { "expr": "increase(tables_created_total[1m])", "legendFormat": "created" }
+      ],
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 6 }
+    },
+    {
+      "datasource": "Prometheus",
+      "type": "timeseries",
+      "title": "Tables Updated per Minute",
+      "targets": [
+        { "expr": "increase(tables_updated_total[1m])", "legendFormat": "updated" }
+      ],
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 6 }
+    },
+    {
+      "datasource": "Prometheus",
+      "type": "timeseries",
+      "title": "Tables Deleted per Minute",
+      "targets": [
+        { "expr": "increase(tables_deleted_total[1m])", "legendFormat": "deleted" }
+      ],
+      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 6 }
+    },
+    {
+      "datasource": "Prometheus",
+      "type": "stat",
+      "title": "Total Tables",
+      "targets": [
+        { "expr": "tables_total_count" }
+      ],
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 6 }
+    }
+  ],
+  "time": { "from": "now-1h", "to": "now" }
+}

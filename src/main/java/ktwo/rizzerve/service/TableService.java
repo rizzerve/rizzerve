@@ -2,7 +2,11 @@ package ktwo.rizzerve.service;
 
 import ktwo.rizzerve.model.Table;
 import ktwo.rizzerve.repository.TableRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.annotation.Timed;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,10 +19,20 @@ import java.util.Optional;
 public class TableService {
 
     private final TableRepository tableRepository;
+    private final MeterRegistry meterRegistry;
 
     @Autowired
-    public TableService(TableRepository tableRepository) {
+    public TableService(TableRepository tableRepository, MeterRegistry meterRegistry) {
         this.tableRepository = tableRepository;
+        this.meterRegistry = meterRegistry;
+    }
+
+    @PostConstruct
+    public void initMetrics() {
+        // Gauge for current total number of tables
+        Gauge.builder("tables_total_count", tableRepository, TableRepository::count)
+             .description("Total number of restaurant tables")
+             .register(meterRegistry);
     }
 
     /**
@@ -28,13 +42,16 @@ public class TableService {
      * @return the newly created table
      * @throws Exception if a table with the same number already exists
      */
+    @Timed(value = "tables_create_duration", description = "Duration to create a table")
     public Table createTable(String tableNumber) throws Exception {
         if (tableRepository.existsByTableNumber(tableNumber)) {
             throw new Exception("Table number already exists");
         }
 
         Table table = new Table(tableNumber);
-        return tableRepository.save(table);
+        Table saved = tableRepository.save(table);
+        meterRegistry.counter("tables_created_total").increment();
+        return saved;
     }
 
     /**
@@ -42,6 +59,7 @@ public class TableService {
      * 
      * @return list of all tables
      */
+    @Timed(value = "tables_list_duration", description = "Duration to list all tables")
     public List<Table> getAllTables() {
         return tableRepository.findAll();
     }
@@ -64,6 +82,7 @@ public class TableService {
      * @return an Optional with the updated table, or empty if the table was not found
      * @throws Exception if the new table number already exists
      */
+    @Timed(value = "tables_update_duration", description = "Duration to update a table")
     public Optional<Table> updateTable(Long id, String newTableNumber) throws Exception {
         Optional<Table> tableOpt = tableRepository.findById(id);
         
@@ -80,7 +99,9 @@ public class TableService {
         Table table = tableOpt.get();
         table.setTableNumber(newTableNumber);
         
-        return Optional.of(tableRepository.save(table));
+        Table saved = tableRepository.save(table);
+        meterRegistry.counter("tables_updated_total").increment();
+        return Optional.of(saved);
     }
 
     /**
@@ -89,9 +110,11 @@ public class TableService {
      * @param id the ID of the table to delete
      * @return true if the table was deleted, false if it didn't exist
      */
+    @Timed(value = "tables_delete_duration", description = "Duration to delete a table")
     public boolean deleteTable(Long id) {
         if (tableRepository.existsById(id)) {
             tableRepository.deleteById(id);
+            meterRegistry.counter("tables_deleted_total").increment();
             return true;
         }
         return false;
