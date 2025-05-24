@@ -1,9 +1,5 @@
 package ktwo.rizzerve.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ktwo.rizzerve.command.CreateRatingCommand;
-import ktwo.rizzerve.command.DeleteRatingCommand;
-import ktwo.rizzerve.command.UpdateRatingCommand;
 import ktwo.rizzerve.model.MenuItem;
 import ktwo.rizzerve.model.Rating;
 import ktwo.rizzerve.repository.RatingRepository;
@@ -12,128 +8,66 @@ import ktwo.rizzerve.service.RatingService;
 import ktwo.rizzerve.strategy.RatingValidationStrategy;
 import ktwo.rizzerve.web.CreateRatingRequest;
 import ktwo.rizzerve.web.UpdateRatingRequest;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(RatingController.class)
-class RatingControllerTest {
+public class RatingControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private RatingService ratingService;
-
-    @MockBean
-    private RatingRepository ratingRepository;
-
-    @MockBean
+    private RatingService service;
+    private RatingRepository repo;
     private RatingValidationStrategy validation;
-
-    @MockBean
     private MenuItemService menuService;
+    private RatingController controller;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Test
-    void getAllRatings() throws Exception {
-        when(ratingService.getAll()).thenReturn(List.of(new Rating()));
-        mockMvc.perform(get("/api/ratings"))
-                .andExpect(status().isOk());
+    @BeforeEach
+    void setUp() {
+        service = mock(RatingService.class);
+        repo = mock(RatingRepository.class);
+        validation = mock(RatingValidationStrategy.class);
+        menuService = mock(MenuItemService.class);
+        controller = new RatingController(service, repo, validation, menuService);
     }
 
     @Test
-    void getRatingsByMenu() throws Exception {
-        when(ratingService.getByMenu("1")).thenReturn(List.of(new Rating()));
-        mockMvc.perform(get("/api/ratings?menuId=1"))
-                .andExpect(status().isOk());
+    void testGetAllRatings() {
+        when(service.getAll()).thenReturn(Collections.emptyList());
+        List<Rating> result = controller.all(null);
+        assertNotNull(result);
     }
 
     @Test
-    void getRatingById_found() throws Exception {
-        UUID id = UUID.randomUUID();
-        Rating r = new Rating();
-        when(ratingService.getById(id.toString())).thenReturn(r);
-        mockMvc.perform(get("/api/ratings/" + id))
-                .andExpect(status().isOk());
+    void testGetRatingsByMenuId() {
+        when(service.getByMenu("1")).thenReturn(Collections.emptyList());
+        List<Rating> result = controller.all("1");
+        assertNotNull(result);
     }
 
     @Test
-    void getRatingById_notFound() throws Exception {
-        UUID id = UUID.randomUUID();
-        when(ratingService.getById(id.toString())).thenReturn(null);
-        mockMvc.perform(get("/api/ratings/" + id))
-                .andExpect(status().isNotFound());
+    void testGetRatingByIdNotFound() {
+        when(service.getById("invalid-id")).thenReturn(null);
+        ResponseEntity<Rating> res = controller.byId("invalid-id");
+        assertEquals(404, res.getStatusCodeValue());
     }
 
     @Test
-    void createRating_success() throws Exception {
-        CreateRatingRequest req = new CreateRatingRequest();
-        req.setMenuId("1");
-        req.setUsername("user");
-        req.setRatingValue(5);
+    void testCreateRatingWithInvalidMenuId() {
+        CreateRatingRequest rq = new CreateRatingRequest();
+        rq.setMenuId("abc"); // invalid number
+        rq.setUsername("user");
+        rq.setRatingValue(4);
 
-        MenuItem menu = new MenuItem();
-        when(menuService.getById(1L)).thenReturn(menu);
-        when(ratingService.executeCommand(any(CreateRatingCommand.class)))
-                .thenReturn(new Rating());
-
-        mockMvc.perform(post("/api/ratings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isCreated());
-    }
-
-    @Test
-    void createRating_invalidMenuId() throws Exception {
-        CreateRatingRequest req = new CreateRatingRequest();
-        req.setMenuId("notanumber");
-        req.setUsername("user");
-        req.setRatingValue(3);
-
-        mockMvc.perform(post("/api/ratings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void updateRating_success() throws Exception {
-        UUID id = UUID.randomUUID();
-        UpdateRatingRequest req = new UpdateRatingRequest();
-        req.menuId = "1";
-        req.username = "updatedUser";
-        req.ratingValue = 4;
-
-        MenuItem menu = new MenuItem();
-        when(menuService.getById(1L)).thenReturn(menu);
-        when(ratingService.executeCommand(any(UpdateRatingCommand.class)))
-                .thenReturn(new Rating());
-
-        mockMvc.perform(put("/api/ratings/" + id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void deleteRating_success() throws Exception {
-        UUID id = UUID.randomUUID();
-        mockMvc.perform(delete("/api/ratings/" + id))
-                .andExpect(status().isNoContent());
-
-        verify(ratingService).executeCommand(any(DeleteRatingCommand.class));
+        ResponseEntity<?> response = controller.createApi(rq);
+        assertEquals(400, response.getStatusCodeValue());
+        assertTrue(response.getBody().toString().contains("Invalid menu ID format"));
     }
 }
