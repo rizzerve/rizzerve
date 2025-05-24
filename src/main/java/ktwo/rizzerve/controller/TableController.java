@@ -26,9 +26,13 @@ public class TableController {
      * @return The created table or an error message
      */
     @PostMapping
-    public ResponseEntity<?> createTable(@RequestParam String tableNumber,
+    public ResponseEntity<?> createTable(@RequestParam(required = true) String tableNumber,
                                          @RequestHeader(value = "Accept", required = false) String accept) {
         try {
+            if (tableNumber == null || tableNumber.trim().isEmpty()) {
+                throw new IllegalArgumentException("Table number cannot be empty");
+            }
+            
             Table table = tableService.createTable(tableNumber);
             // If the request is from a browser (not API), redirect to /tables
             if (accept != null && accept.contains("text/html")) {
@@ -75,9 +79,13 @@ public class TableController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTable(@PathVariable Long id,
-                                         @RequestParam String newTableNumber,
+                                         @RequestParam(required = true) String newTableNumber,
                                          @RequestHeader(value = "Accept", required = false) String accept) {
         try {
+            if (newTableNumber == null || newTableNumber.trim().isEmpty()) {
+                throw new IllegalArgumentException("Table number cannot be empty");
+            }
+            
             var result = tableService.updateTable(id, newTableNumber);
             if (accept != null && accept.contains("text/html")) {
                 return ResponseEntity.status(302).header("Location", "/tables").build();

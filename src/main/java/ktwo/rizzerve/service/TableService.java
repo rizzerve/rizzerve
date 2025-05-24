@@ -6,6 +6,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +22,18 @@ public class TableService {
     private final TableRepository tableRepository;
     private final MeterRegistry meterRegistry;
 
+    /**
+     * Constructor for tests or default registry.
+     */
+    public TableService(TableRepository tableRepository) {
+        this(tableRepository, new SimpleMeterRegistry());
+    }
+
     @Autowired
     public TableService(TableRepository tableRepository, MeterRegistry meterRegistry) {
         this.tableRepository = tableRepository;
-        this.meterRegistry = meterRegistry;
+        // use provided registry or fallback for tests
+        this.meterRegistry = meterRegistry != null ? meterRegistry : new SimpleMeterRegistry();
     }
 
     @PostConstruct

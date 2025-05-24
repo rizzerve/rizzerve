@@ -24,7 +24,7 @@
 
         <div class="quick-card" style="margin-bottom: 2rem;">
             <h2>Add New Table</h2>
-            <form id="addTableForm" class="inline-form">
+            <form id="addTableForm" class="inline-form" action="/api/tables" method="POST">
                 <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
                 
                 <div class="form-row">
@@ -173,18 +173,29 @@
         loadTables(); // Refresh to show edit form
     }
 
-    // Fixed addTable function to send form data
+    // Fixed addTable function to send form data correctly
     function addTable(event) {
         event.preventDefault();
         
         const formData = new FormData(event.target);
+        const tableNumber = formData.get('tableNumber');
+        
+        if (!tableNumber) {
+            showAlert('Table number is required', true);
+            return;
+        }
+        
+        // Use URLSearchParams to properly format the data as x-www-form-urlencoded
+        const params = new URLSearchParams();
+        params.append('tableNumber', tableNumber);
         
         fetch('/api/tables', {
             method: 'POST',
             headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
                 [csrfHeader]: csrfToken
             },
-            body: formData
+            body: params
         })
         .then(response => {
             if (!response.ok) return response.text().then(text => { throw new Error(text) });
@@ -205,12 +216,22 @@
         const form = document.querySelector(`td form input[name="newTableNumber"]`);
         const newTableNumber = form.value;
         
-        fetch(`/api/tables/${id}?newTableNumber=${encodeURIComponent(newTableNumber)}`, {
+        if (!newTableNumber) {
+            showAlert('Table number is required', true);
+            return;
+        }
+        
+        // Use URLSearchParams to properly format the data
+        const params = new URLSearchParams();
+        params.append('newTableNumber', newTableNumber);
+        
+        fetch(`/api/tables/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 [csrfHeader]: csrfToken
-            }
+            },
+            body: params
         })
         .then(response => {
             if (!response.ok) return response.text().then(text => { throw new Error(text) });
