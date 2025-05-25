@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>RIZZerve | Home</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}" />
+    <link rel="stylesheet" th:href="@{/css/menu.css}" />
+</head>
+<body>
+
+<!-- Top Navbar -->
+<div th:replace="fragments/topnav :: topnav"></div>
+
+<!-- Sidebar for Customers -->
+<div th:replace="fragments/sidebar :: sidebar"></div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="home-welcome">
+        <h1>Welcome to Rizzerve 🍽</h1>
+        <p>Hello foodie! Explore the menu and place your order 👇</p>
+
+        <div class="quick-links">
+            <a class="quick-card" th:href="@{/menu}">📋 View Menu</a>
+            <a class="quick-card" th:href="@{/cart}">🛒 Your Orders</a>
+            <a class="quick-card" th:href="@{/rate}">⭐ Rate a Menu</a> <!-- ← INI YANG DITAMBAH -->
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

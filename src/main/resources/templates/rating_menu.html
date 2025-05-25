@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Rate a Menu Item</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            background: #f4f4f4;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-navbar {
+            background-color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .navbar-title {
+            color: #1a1a1a;
+        }
+
+        .content {
+            display: flex;
+            flex: 1;
+            height: 100%;
+        }
+
+        .sidebar {
+            width: 100px;
+            background-color: #fff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        .sidebar-item {
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .main {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-y: auto;
+        }
+
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        label, input, button {
+            display: block;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 0.6rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            background: #eee;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .error-msg {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .btn-small {
+            display: inline-block;
+            width: auto;
+            margin-left: 0.5rem;
+            padding: 0.3rem 0.6rem;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<header class="top-navbar">
+    <div class="navbar-title">RIZZerve</div>
+</header>
+
+<div class="content">
+    <div class="sidebar">
+        <div class="sidebar-item">🏠<br><a href="/home">Home</a></div>
+        <div class="sidebar-item">📋<br><a href="/menu">Menu</a></div>
+        <div class="sidebar-item">💳<br><a href="/order">Order</a></div>
+    </div>
+
+    <div class="main">
+        <div class="form-container">
+            <h2 id="menu-title">Rate: </h2>
+
+            <form id="ratingForm">
+                <label for="username">Username</label>
+                <input id="username" type="text" placeholder="Your name" required />
+
+                <label for="ratingValue">Rating (1–5)⭐️</label>
+                <input id="ratingValue" type="number" min="1" max="5" required />
+
+                <div id="errorMsg" class="error-msg"></div>
+                <button type="submit">Submit Rating</button>
+            </form>
+
+            <h3>All Ratings</h3>
+            <ul id="ratingList"></ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const menuId = params.get("menuId");
+    const username = document.getElementById("username");
+    const ratingValue = document.getElementById("ratingValue");
+    const ratingList = document.getElementById("ratingList");
+    const menuTitle = document.getElementById("menu-title");
+    const errorMsg = document.getElementById("errorMsg");
+
+    const storedUsername = localStorage.getItem('username') || '';
+    username.value = storedUsername;
+
+    async function loadMenuTitle() {
+        try {
+            const res = await fetch(`/api/menuitems/${menuId}`);
+            const data = await res.json();
+            menuTitle.textContent = "Rate: " + data.name;
+        } catch (err) {
+            console.error("Failed to load menu title:", err);
+        }
+    }
+
+    async function loadRatings() {
+        try {
+            const res = await fetch(`/api/ratings?menuId=${menuId}`);
+            const ratings = await res.json();
+            ratingList.innerHTML = "";
+            ratings.forEach(r => {
+                const li = document.createElement("li");
+                const star = r.ratingValue === 1 ? "star" : "stars";
+                li.textContent = `${r.username} rated this menu ⭐ ${r.ratingValue} ${star}`;
+                li.dataset.id = r.id;
+
+                if (r.username === username.value) {
+                    const editBtn = document.createElement("button");
+                    editBtn.className = "btn-small btn-edit";
+                    editBtn.textContent = "Edit";
+                    editBtn.onclick = () => {
+                        window.location.href = `/edit-menu?id=${r.id}&from=menu`;
+                    };
+
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.className = "btn-small btn-delete";
+                    deleteBtn.textContent = "Delete";
+                    deleteBtn.onclick = async () => {
+                        await fetch(`/api/ratings/${r.id}`, { method: "DELETE" });
+                        await loadRatings();
+                    };
+
+                    li.appendChild(editBtn);
+                    li.appendChild(deleteBtn);
+                }
+
+                ratingList.appendChild(li);
+            });
+        } catch (err) {
+            console.error("Failed to load ratings:", err);
+        }
+    }
+
+    document.getElementById("ratingForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorMsg.textContent = "";
+
+        const payload = {
+            menuId,
+            username: username.value,
+            ratingValue: parseInt(ratingValue.value),
+        };
+
+        const res = await fetch("/api/ratings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+
+        if (res.status === 409) {
+            errorMsg.textContent = "⚠️ You have already rated this menu!";
+        } else if (!res.ok) {
+            errorMsg.textContent = "⚠️ Failed to submit rating.";
+        } else {
+            e.target.reset();
+            username.value = storedUsername;
+            await loadRatings();
+        }
+    });
+
+    loadMenuTitle();
+    loadRatings();
+</script>
+</body>
+</html>

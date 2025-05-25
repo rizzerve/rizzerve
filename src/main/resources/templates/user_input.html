@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enter Username</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .auth-container {
+            background: white;
+            padding: 3rem 4rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        .auth-container h1 {
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .auth-form input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 0.75rem;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .auth-button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-container">
+    <h1>Enter Your Username</h1>
+    <form class="auth-form" onsubmit="goToHome(event)">
+        <input type="text" id="username" placeholder="Username" required />
+        <button type="submit" class="auth-button">Continue 🚀</button>
+    </form>
+</div>
+
+<script>
+    function goToHome(e) {
+        e.preventDefault();
+        const uname = document.getElementById('username').value.trim();
+        if (uname !== '') {
+            localStorage.setItem('username', uname);
+            location.href = '/home';
+        } else {
+            alert("Username is required!");
+        }
+    }
+</script>
+
+</body>
+</html>

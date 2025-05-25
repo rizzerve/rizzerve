@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Welcome to RIZZerve</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 3rem 4rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        button {
+            margin: 0.5rem;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .admin {
+            background: #007bff;
+            color: white;
+        }
+
+        .user {
+            background: #28a745;
+            color: white;
+        }
+
+        .emoji {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="emoji">🍔🍜🍣 Welcome to <strong>RIZZerve</strong> 🍕🥗🍩</div>
+    <h1>Hello there!</h1>
+    <p>Please select your role to continue:</p>
+    <button class="admin" onclick="location.href='/admin/login'">👩‍💼 Admin</button>
+    <button class="user" onclick="location.href='/user/input'">🧑‍🍽️ User</button>
+</div>
+</body>
+</html>
