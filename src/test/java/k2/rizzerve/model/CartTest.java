@@ -3,28 +3,27 @@ package k2.rizzerve.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
-import java.util.Set; // Use Set if items should be unique per product
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CartTest {
 
-    private Cart cart;
+    private Checkout_Cart cart;
     private User user;
-    private Product product1;
-    private Product product2;
+    private Checkout_Product product1;
+    private Checkout_Product product2;
 
     @BeforeEach
     void setUp() {
         user = new User("cartuser", "cart@test.com", "pass");
         user.setId(1L);
 
-        cart = new Cart(user); // Need constructor accepting User
+        cart = new Checkout_Cart(user); // Need constructor accepting User
         cart.setId(1L);
 
-        product1 = new Product("Tea", new BigDecimal("2.50"));
+        product1 = new Checkout_Product("Tea", new BigDecimal("2.50"));
         product1.setId(10L);
-        product2 = new Product("Cake", new BigDecimal("5.00"));
+        product2 = new Checkout_Product("Cake", new BigDecimal("5.00"));
         product2.setId(20L);
     }
 

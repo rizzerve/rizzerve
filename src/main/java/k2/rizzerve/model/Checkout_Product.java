@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Table(name = "products") // Define table name
 @Data // Lombok for getters, setters, toString, equals, hashCode
 @NoArgsConstructor // JPA requires a no-arg constructor
-public class Product {
+public class Checkout_Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment ID
@@ -23,7 +23,7 @@ public class Product {
     private BigDecimal price;
 
     // Constructor for creating new products easily
-    public Product(String name, BigDecimal price) {
+    public Checkout_Product(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
     }

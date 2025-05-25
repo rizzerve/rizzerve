@@ -1,6 +1,6 @@
 package k2.rizzerve.repository;
 
-import k2.rizzerve.model.Cart;
+import k2.rizzerve.model.Checkout_Cart;
 import k2.rizzerve.model.CartItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -11,23 +11,22 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 @Repository
 public class CartRepository {
-    private final Map<Long, Cart> carts = new ConcurrentHashMap<>();
+    private final Map<Long, Checkout_Cart> carts = new ConcurrentHashMap<>();
     private final AtomicLong idCounter = new AtomicLong(1);
 
-    private final CartItemRepository cartItemRepository;
-    private final UserCartLinkRepository userCartLinkRepository;
+    private final Checkout_CartItemRepository cartItemRepository;
+    private final Checkout_UserCartLinkRepository userCartLinkRepository;
 
     @Autowired
-    public CartRepository(CartItemRepository cartItemRepository, UserCartLinkRepository userCartLinkRepository) {
+    public CartRepository(Checkout_CartItemRepository cartItemRepository, Checkout_UserCartLinkRepository userCartLinkRepository) {
         this.cartItemRepository = cartItemRepository;
         this.userCartLinkRepository = userCartLinkRepository;
     }
 
-    public Cart save(Cart cart) {
+    public Checkout_Cart save(Checkout_Cart cart) {
         if (cart.getUser() == null || cart.getUser().getId() == null) {
             throw new IllegalArgumentException("Cart must have an associated user with an ID to be saved.");
         }
@@ -52,21 +51,21 @@ public class CartRepository {
         return cart;
     }
 
-    public Optional<Cart> findById(Long id) {
+    public Optional<Checkout_Cart> findById(Long id) {
         return Optional.ofNullable(carts.get(id));
     }
 
-    public Optional<Cart> findByUserId(Long userId) {
+    public Optional<Checkout_Cart> findByUserId(Long userId) {
         return userCartLinkRepository.getCartIdByUserId(userId)
                 .flatMap(this::findById);
     }
 
-    public List<Cart> findAll() {
+    public List<Checkout_Cart> findAll() {
         return new ArrayList<>(carts.values());
     }
 
     public void deleteById(Long cartId) {
-        Cart removedCart = carts.remove(cartId);
+        Checkout_Cart removedCart = carts.remove(cartId);
         if (removedCart != null) {
             // Remove associated links and items
             if (removedCart.getUser() != null) {

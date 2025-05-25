@@ -1,10 +1,10 @@
 package k2.rizzerve.controller;
 
-import k2.rizzerve.model.Cart;
+import k2.rizzerve.model.Checkout_Cart;
 import k2.rizzerve.model.User;
 import k2.rizzerve.repository.CartRepository;
 import k2.rizzerve.repository.UserRepository;
-import k2.rizzerve.util.DataInitializer; // Import for default user ID
+import k2.rizzerve.util.Checkout_DataInitializer; // Import for default user ID
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,16 +17,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class CheckoutController {
+public class Checkout_CheckoutController {
 
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
 
     // Default user to show if no userId is specified in the request
-    private static final Long DEFAULT_USER_ID = DataInitializer.USER_ID_ALICE;
+    private static final Long DEFAULT_USER_ID = Checkout_DataInitializer.USER_ID_ALICE;
 
     @Autowired
-    public CheckoutController(CartRepository cartRepository, UserRepository userRepository) {
+    public Checkout_CheckoutController(CartRepository cartRepository, UserRepository userRepository) {
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
     }
@@ -46,7 +46,7 @@ public class CheckoutController {
             User user = userOptional.get();
             model.addAttribute("username", user.getUsername());
 
-            Optional<Cart> cartOptional = cartRepository.findByUserId(user.getId());
+            Optional<Checkout_Cart> cartOptional = cartRepository.findByUserId(user.getId());
             if (cartOptional.isPresent()) {
                 model.addAttribute("cart", cartOptional.get());
                 // Make sure items are eagerly fetched or explicitly loaded if lazy

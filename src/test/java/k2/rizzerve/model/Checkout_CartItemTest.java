@@ -3,16 +3,15 @@ package k2.rizzerve.model;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*; // Use Mockito if Cart interaction needed later
 
-public class CartItemTest {
+public class Checkout_CartItemTest {
 
     @Test
     void cartItemShouldCalculateSubtotal() {
         // Arrange
-        Product product = new Product("Latte", new BigDecimal("4.00"));
+        Checkout_Product product = new Checkout_Product("Latte", new BigDecimal("4.00"));
         product.setId(1L);
-        Cart cart = new Cart(); // Assume Cart exists for linking, can mock later
+        Checkout_Cart cart = new Checkout_Cart(); // Assume Cart exists for linking, can mock later
         cart.setId(1L);
         int quantity = 3;
 
@@ -32,9 +31,9 @@ public class CartItemTest {
     @Test
     void cartItemSubtotalShouldBeZeroIfProductOrPriceIsNull() {
         // Arrange
-        Cart cart = new Cart(); cart.setId(1L);
-        Product nullPriceProduct = new Product("Mystery Drink", null); nullPriceProduct.setId(2L);
-        Product nullProduct = null; // Representing an error state
+        Checkout_Cart cart = new Checkout_Cart(); cart.setId(1L);
+        Checkout_Product nullPriceProduct = new Checkout_Product("Mystery Drink", null); nullPriceProduct.setId(2L);
+        Checkout_Product nullProduct = null; // Representing an error state
 
         // Act
         CartItem item1 = new CartItem(cart, nullPriceProduct, 2);

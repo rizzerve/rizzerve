@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Repository
-public class CartItemRepository {
+public class Checkout_CartItemRepository {
     private final Map<Long, CartItem> cartItems = new ConcurrentHashMap<>();
     private final AtomicLong idCounter = new AtomicLong(1);
 

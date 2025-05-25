@@ -14,7 +14,7 @@ import java.util.Set;
 @Table(name = "carts")
 @Data
 @NoArgsConstructor
-public class Cart {
+public class Checkout_Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class Cart {
     @ToString.Exclude // Avoid recursion in Lombok methods
     private Set<CartItem> items = new HashSet<>();
 
-    public Cart(User user) {
+    public Checkout_Cart(User user) {
         this.user = user;
     }
 

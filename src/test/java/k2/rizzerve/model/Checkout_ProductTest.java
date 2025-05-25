@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ProductTest {
+public class Checkout_ProductTest {
 
     @Test
     void productShouldHaveIdNameAndPrice() {
@@ -13,7 +13,7 @@ public class ProductTest {
         BigDecimal price = new BigDecimal("3.50");
 
         // Act
-        Product product = new Product(name, price);
+        Checkout_Product product = new Checkout_Product(name, price);
         product.setId(1L); // Simulate ID assignment
 
         // Assert
