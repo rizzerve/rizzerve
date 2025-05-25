@@ -61,6 +61,13 @@ To address this, we introduced a new component: Security Audit Service. This com
 
 Overall, this architectural change significantly reduces our project’s total risk score, particularly in the Security and Data Integrity categories. It also aligns with the system’s growth projection by providing a scalable foundation for monitoring and future compliance requirements. The updated container and context diagrams clearly reflect this evolution, ensuring our system is both robust and audit-ready.
 
+# Monitoring & Observability
+### Manage Table Feature
+Isaac Jesse Boentoro - 2306256362
+This project comes with a docker-compose.yml file that can be run with `docker-commpose up -d` to launch Prometheus and Grafana visualizers to monitor the amount of tables created and similar statistics. In terms of profiling, there is a Grafana K6 stress test `table-stress-test.js` which ramps up to 50 virtual users that view, create and delete tables. Below is the flame graph:
+![flame graph](images/flamegraph.png)
+Upon inspecting the flame graph, no particular hot spots were found, and all the code related to the stress test was functioning optimally. Therefore, no changes were made to the code (besides adding the monitoring capability). Unfortunately, due to Azure constraints, the Prometheus and Grafana containers cannot be deployed, but the main deployment still has an exposed Prometheus endpoint at `/actuator/prometheus`. 
+
 ## INDIVIDUAL DIAGRAMS
 ### Food Rating Feature
 by Samuella Putri Nadia Pauntu - 2306170446

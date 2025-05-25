@@ -39,7 +39,7 @@
             const { token } = await resp.json();
             localStorage.setItem('jwtToken', token);
             document.cookie = `jwt=${token}; Path=/; SameSite=Strict;`;
-            window.location.href = '/home';
+            window.location.href = '/admin/home';
         } else {
             alert('Login failed');
         }

@@ -44,11 +44,12 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/login", "/admin/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/categories", "/api/menuitems").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/categories", "/api/menuitems","/api/menuitems/with-ratings", "/api/menuitems/**").permitAll()
                         .requestMatchers("/admin/**", "/categories/**",
-                                "/menus/**",
+                                "/menus/**", "/tables/**",
                                 "/api/categories/**",
-                                "/api/menuitems/**").hasRole("ADMIN")
+                                "/api/menuitems/**",
+                                "/api/tables/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
