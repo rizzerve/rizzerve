@@ -1,7 +1,7 @@
 package ktwo.rizzerve.service;
 
-import k2.rizzerve.model.Order;
-import k2.rizzerve.repository.OrderRepository;
+import ktwo.rizzerve.model.Order;
+import ktwo.rizzerve.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
