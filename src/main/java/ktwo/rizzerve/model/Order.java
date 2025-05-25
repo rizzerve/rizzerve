@@ -1,7 +1,8 @@
-package k2.rizzerve.model;
+package ktwo.rizzerve.model;
 
 import jakarta.persistence.*;
-import k2.rizzerve.enums.OrderStatus;
+import jakarta.persistence.Table;
+import ktwo.rizzerve.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

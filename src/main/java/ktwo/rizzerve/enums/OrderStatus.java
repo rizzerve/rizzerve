@@ -1,4 +1,4 @@
-package k2.rizzerve.enums;
+package ktwo.rizzerve.enums;
 
 public enum OrderStatus {
     AWAITING_PAYMENT,

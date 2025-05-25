@@ -1,4 +1,4 @@
-package k2.rizzerve.repository;
+package ktwo.rizzerve.repository;
 
 import k2.rizzerve.model.Order;
 import org.springframework.stereotype.Repository;

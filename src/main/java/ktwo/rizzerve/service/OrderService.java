@@ -1,4 +1,4 @@
-package k2.rizzerve.service;
+package ktwo.rizzerve.service;
 
 import k2.rizzerve.model.Order;
 import k2.rizzerve.repository.OrderRepository;

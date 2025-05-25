@@ -1,7 +1,7 @@
-package k2.rizzerve.controller;
+package ktwo.rizzerve.controller;
 
-import k2.rizzerve.model.Order;
-import k2.rizzerve.service.OrderService;
+import ktwo.rizzerve.model.Order;
+import ktwo.rizzerve.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
