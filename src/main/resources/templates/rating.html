@@ -6,17 +6,65 @@
     <style>
         body {
             font-family: sans-serif;
-            margin: 2rem;
+            margin: 0;
             background: #f4f4f4;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-navbar {
+            background-color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .navbar-title {
+            color: #1a1a1a;
+        }
+
+        .content {
+            display: flex;
+            flex: 1;
+            height: 100%;
+        }
+
+        .sidebar {
+            width: 100px;
+            background-color: #fff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        .sidebar-item {
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .main {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-y: auto;
         }
 
         .form-container {
-            max-width: 450px;
-            margin: auto;
             background: white;
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
         }
 
         label, input, select, button {
@@ -76,28 +124,46 @@
     </style>
 </head>
 <body>
-<div class="form-container">
-    <h2>Rate a Dish</h2>
 
-    <form id="ratingForm">
-        <label for="menuId">Menu</label>
-        <select id="menuId" required>
-            <option value="" disabled selected>Select a menu</option>
-        </select>
+<!-- ✅ Hardcoded Top Navbar -->
+<header class="top-navbar">
+    <div class="navbar-title">RIZZerve</div>
+</header>
 
-        <label for="username">Username</label>
-        <input id="username" type="text" readonly />
+<!-- Content Section -->
+<div class="content">
+    <!-- Sidebar (user version) -->
+    <div class="sidebar">
+        <div class="sidebar-item">🏠<br><a href="/home">Home</a></div>
+        <div class="sidebar-item">📋<br><a href="/menu">Menu</a></div>
+        <div class="sidebar-item">💳<br><a href="/order">Order</a></div>
+    </div>
 
-        <label for="ratingValue">Rating (1–5)</label>
-        <input id="ratingValue" type="number" min="1" max="5" required />
+    <!-- Main Content -->
+    <div class="main">
+        <div class="form-container">
+            <h2>Rate a Dish</h2>
 
-        <div id="errorMsg" class="error-msg"></div>
+            <form id="ratingForm">
+                <label for="menuId">Menu</label>
+                <select id="menuId" required>
+                    <option value="" disabled selected>Select a menu</option>
+                </select>
 
-        <button type="submit">Submit</button>
-    </form>
+                <label for="username">Username</label>
+                <input id="username" type="text" readonly />
 
-    <h3>All Ratings</h3>
-    <ul id="ratingList"></ul>
+                <label for="ratingValue">Rating (1–5) ⭐</label>
+                <input id="ratingValue" type="number" min="1" max="5" required />
+
+                <div id="errorMsg" class="error-msg"></div>
+                <button type="submit">Submit</button>
+            </form>
+
+            <h3>All Ratings</h3>
+            <ul id="ratingList"></ul>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -133,9 +199,10 @@
             ratingList.innerHTML = '';
             ratings.forEach(r => {
                 const menuName = r.menuItem?.name || 'Unknown';
+                const starLabel = r.ratingValue === 1 ? 'star' : 'stars';
                 const li = document.createElement('li');
                 li.dataset.id = r.id;
-                li.innerHTML = `${r.username} rated ${menuName} → ${r.ratingValue}`;
+                li.innerHTML = `${r.username} rated ${menuName} ⭐ ${r.ratingValue} ${starLabel}`;
 
                 if (r.username === usernameInput.value) {
                     const editBtn = document.createElement('button');
