@@ -66,7 +66,9 @@ Overall, this architectural change significantly reduces our project’s total r
 Isaac Jesse Boentoro - 2306256362
 This project comes with a docker-compose.yml file that can be run with `docker-commpose up -d` to launch Prometheus and Grafana visualizers to monitor the amount of tables created and similar statistics. In terms of profiling, there is a Grafana K6 stress test `table-stress-test.js` which ramps up to 50 virtual users that view, create and delete tables. Below is the flame graph:
 ![flame graph](images/flamegraph.png)
-Upon inspecting the flame graph, no particular hot spots were found, and all the code related to the stress test was functioning optimally. Therefore, no changes were made to the code (besides adding the monitoring capability). Unfortunately, due to Azure constraints, the Prometheus and Grafana containers cannot be deployed, but the main deployment still has an exposed Prometheus endpoint at `/actuator/prometheus`. 
+Upon inspecting the flame graph, no particular hot spots were found, and all the code related to the stress test was functioning optimally. Therefore, no changes were made to the code (besides adding the monitoring capability). Prometheus deployment can be found at
+
+https://rizzerve-monitor.ambitiouswater-27e3bbd0.southeastasia.azurecontainerapps.io/graph?g0.expr=&g0.tab=1&g0.stacked=0&g0.show_exemplars=0&g0.range_input=1h
 
 ## INDIVIDUAL DIAGRAMS
 ### Food Rating Feature
