@@ -1,0 +1,19 @@
+{
+  "title": "Rating Metrics",
+  "panels": [
+    {
+      "title": "Ratings Created",
+      "type": "timeseries",
+      "targets": [
+        { "expr": "increase(ratings_created_total[1m])" }
+      ]
+    },
+    {
+      "title": "Ratings Updated",
+      "type": "timeseries",
+      "targets": [
+        { "expr": "increase(ratings_updated_total[1m])" }
+      ]
+    }
+  ]
+}
