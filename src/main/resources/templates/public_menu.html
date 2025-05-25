@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu</title>
+    <link rel="stylesheet" th:href="@{/css/menu.css}" />
+</head>
+<body>
+
+<div th:replace="fragments/sidebar :: sidebar"></div>
+<div th:replace="fragments/topnav :: topnav"></div>
+
+<div class="main-content">
+    <div class="search-bar">
+        <label for="menu-search" class="sr-only">Search menu items</label>
+        <input type="text" id="menu-search" placeholder="Search menu items..." />
+    </div>
+
+    <nav class="category-nav">
+        <ul id="category-buttons">
+        </ul>
+    </nav>
+
+    <main id="menu-sections">
+    </main>
+
+    <!-- 🔍 Dynamic search result section -->
+    <div id="search-results" style="display:none;">
+        <h2 class="category-title">Search Results</h2>
+        <div class="menu-grid" id="search-grid"></div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const categoryList = document.getElementById("category-buttons");
+        const menuSections = document.getElementById("menu-sections");
+        const searchResults = document.getElementById("search-results");
+        const searchGrid = document.getElementById("search-grid");
+        const searchInput = document.getElementById("menu-search");
+
+        let categoryMap = {};
+
+        function loadData() {
+            Promise.all([
+                fetch("/api/categories").then(res => res.json()),
+                fetch("/api/menuitems").then(res => res.json())
+            ]).then(([categories, menuItems]) => {
+                categoryList.innerHTML = "";
+                menuSections.innerHTML = "";
+                searchGrid.innerHTML = "";
+                categoryMap = {};
+
+                categories.forEach(cat => {
+                    // Render nav button
+                    const li = document.createElement("li");
+                    li.className = "category-item";
+                    li.innerHTML = `<button type="button" data-target="cat-${cat.id}" class="category-btn">${cat.name}</button>`;
+                    categoryList.appendChild(li);
+
+                    // Prepare section
+                    const section = document.createElement("section");
+                    section.id = `cat-${cat.id}`;
+                    section.innerHTML = `<h2 class="category-title">${cat.name}</h2><div class="menu-grid" id="grid-${cat.id}"></div>`;
+                    menuSections.appendChild(section);
+
+                    categoryMap[cat.id] = document.getElementById(`grid-${cat.id}`);
+                });
+
+                menuItems.forEach(item => {
+                    if (!categoryMap[item.category.id]) return;
+
+                    const card = document.createElement("div");
+                    card.className = "menu-card";
+                    card.innerHTML = `
+                    <div class="menu-info">
+                        <p class="menu-name">${item.name}</p>
+                        <p class="menu-price">Rp ${item.price}</p>
+                        <p class="menu-description">${item.description}</p>
+                        <p class="menu-availability">${item.available ? '✅ Available' : '❌ Not Available'}</p>
+                    </div>
+                    <div class="menu-action">
+                        ${item.available
+                        ? `<button class="add-btn" onclick="window.location.href='/menuitems/${item.id}'">＋ Add</button>`
+                        : `<button class="add-btn disabled" disabled>＋</button>`}
+                    </div>
+                `;
+                    categoryMap[item.category.id].appendChild(card);
+                });
+
+                // 🔍 Search filter
+                searchInput.addEventListener("input", () => {
+                    const query = searchInput.value.toLowerCase().trim();
+
+                    if (!query) {
+                        // Reset view
+                        menuSections.style.display = "block";
+                        searchResults.style.display = "none";
+                        return;
+                    }
+
+                    // Hide category layout, show search result area
+                    menuSections.style.display = "none";
+                    searchResults.style.display = "block";
+                    searchGrid.innerHTML = "";
+
+                    document.querySelectorAll(".menu-card").forEach(card => {
+                        const name = card.querySelector(".menu-name")?.textContent.toLowerCase() || "";
+                        const desc = card.querySelector(".menu-description")?.textContent.toLowerCase() || "";
+                        const match = name.includes(query) || desc.includes(query);
+                        if (match) {
+                            searchGrid.appendChild(card.cloneNode(true));
+                        }
+                    });
+                });
+
+                if (typeof initCategoryScroll === "function") {
+                    initCategoryScroll();
+                }
+            });
+        }
+
+        loadData();
+
+        const eventSource = new EventSource("/menu/stream");
+        eventSource.addEventListener("menu-update", function () {
+            loadData();
+        });
+    });
+</script>
+<script src="/js/scroll.js"></script>
+</body>
+</html>

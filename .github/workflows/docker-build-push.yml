@@ -50,3 +50,12 @@ jobs:
           ${{ secrets.ACR_REGISTRY_URL }}/rizzerve:${{ github.sha }}
         cache-from: type=registry,ref=${{ secrets.ACR_REGISTRY_URL }}/rizzerve:buildcache
         cache-to: type=registry,ref=${{ secrets.ACR_REGISTRY_URL }}/rizzerve:buildcache,mode=max
+    - name: Update Azure Container App
+      if: github.event_name != 'pull_request'
+      run: |
+        az containerapp update \
+          --name rizzerve-deploy \
+          --resource-group rizzerve \
+          --image ${{ secrets.ACR_REGISTRY_URL }}/rizzerve:${{ github.sha }}
+
+          
