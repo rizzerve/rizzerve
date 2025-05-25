@@ -70,7 +70,7 @@ Upon inspecting the flame graph, no particular hot spots were found, and all the
 
 https://rizzerve-monitor.ambitiouswater-27e3bbd0.southeastasia.azurecontainerapps.io/graph?g0.expr=&g0.tab=1&g0.stacked=0&g0.show_exemplars=0&g0.range_input=1h
 
-### Manage Table Feature Profiling
+### Rating Feature Profiling
 Samuella Putri Nadia Pauntu - 2306170446
 
 #### Light load
