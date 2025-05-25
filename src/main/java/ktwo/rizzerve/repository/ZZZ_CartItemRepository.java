@@ -1,6 +1,6 @@
-package k2.rizzerve.repository;
+package ktwo.rizzerve.repository;
 
-import k2.rizzerve.model.CartItem;
+import ktwo.rizzerve.model.ZZZ_CartItem;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Repository
-public class Checkout_CartItemRepository {
-    private final Map<Long, CartItem> cartItems = new ConcurrentHashMap<>();
+public class ZZZ_CartItemRepository {
+    private final Map<Long, ZZZ_CartItem> cartItems = new ConcurrentHashMap<>();
     private final AtomicLong idCounter = new AtomicLong(1);
 
-    public CartItem save(CartItem item) {
+    public ZZZ_CartItem save(ZZZ_CartItem item) {
         if (item.getId() == null) {
             item.setId(idCounter.getAndIncrement());
         }
@@ -24,11 +24,11 @@ public class Checkout_CartItemRepository {
         return item;
     }
 
-    public Optional<CartItem> findById(Long id) {
+    public Optional<ZZZ_CartItem> findById(Long id) {
         return Optional.ofNullable(cartItems.get(id));
     }
 
-    public List<CartItem> findByCartId(Long cartId) {
+    public List<ZZZ_CartItem> findByCartId(Long cartId) {
         return cartItems.values().stream()
                 .filter(item -> item.getCart() != null && item.getCart().getId().equals(cartId))
                 .collect(Collectors.toList());
@@ -41,12 +41,12 @@ public class Checkout_CartItemRepository {
     public void deleteByCartId(Long cartId) {
         List<Long> itemIdsToRemove = cartItems.values().stream()
                 .filter(item -> item.getCart() != null && item.getCart().getId().equals(cartId))
-                .map(CartItem::getId)
+                .map(ZZZ_CartItem::getId)
                 .collect(Collectors.toList());
         itemIdsToRemove.forEach(cartItems::remove);
     }
 
-    public List<CartItem> findAll() {
+    public List<ZZZ_CartItem> findAll() {
         return new ArrayList<>(cartItems.values());
     }
 

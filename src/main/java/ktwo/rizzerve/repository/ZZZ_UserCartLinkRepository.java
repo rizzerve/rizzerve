@@ -1,4 +1,4 @@
-package k2.rizzerve.repository;
+package ktwo.rizzerve.repository;
 
 import org.springframework.stereotype.Repository;
 
@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-public class Checkout_UserCartLinkRepository {
+public class ZZZ_UserCartLinkRepository {
     // In a real scenario with multiple carts per user (e.g., saved carts, active cart),
     // this would be more complex. For now, assuming one active cart per user.
     private final Map<Long, Long> userIdToCartIdMap = new ConcurrentHashMap<>(); // userId -> cartId

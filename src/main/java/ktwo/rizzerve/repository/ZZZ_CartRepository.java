@@ -1,7 +1,7 @@
-package k2.rizzerve.repository;
+package ktwo.rizzerve.repository;
 
-import k2.rizzerve.model.Checkout_Cart;
-import k2.rizzerve.model.CartItem;
+import ktwo.rizzerve.model.ZZZ_Cart;
+import ktwo.rizzerve.model.ZZZ_CartItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,20 +13,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-public class CartRepository {
-    private final Map<Long, Checkout_Cart> carts = new ConcurrentHashMap<>();
+public class ZZZ_CartRepository {
+    private final Map<Long, ZZZ_Cart> carts = new ConcurrentHashMap<>();
     private final AtomicLong idCounter = new AtomicLong(1);
 
-    private final Checkout_CartItemRepository cartItemRepository;
-    private final Checkout_UserCartLinkRepository userCartLinkRepository;
+    private final ZZZ_CartItemRepository cartItemRepository;
+    private final ZZZ_UserCartLinkRepository userCartLinkRepository;
 
     @Autowired
-    public CartRepository(Checkout_CartItemRepository cartItemRepository, Checkout_UserCartLinkRepository userCartLinkRepository) {
+    public ZZZ_CartRepository(ZZZ_CartItemRepository cartItemRepository, ZZZ_UserCartLinkRepository userCartLinkRepository) {
         this.cartItemRepository = cartItemRepository;
         this.userCartLinkRepository = userCartLinkRepository;
     }
 
-    public Checkout_Cart save(Checkout_Cart cart) {
+    public ZZZ_Cart save(ZZZ_Cart cart) {
         if (cart.getUser() == null || cart.getUser().getId() == null) {
             throw new IllegalArgumentException("Cart must have an associated user with an ID to be saved.");
         }
@@ -39,7 +39,7 @@ public class CartRepository {
         // Ensure all cart items have IDs and are saved in CartItemRepository
         // Also, ensure bidirectional link between cart and cart item is set.
         if (cart.getItems() != null) {
-            for (CartItem item : cart.getItems()) {
+            for (ZZZ_CartItem item : cart.getItems()) {
                 item.setCart(cart); // Ensure parent cart is set
                 cartItemRepository.save(item); // This will assign an ID if new, and store it
             }
@@ -51,21 +51,21 @@ public class CartRepository {
         return cart;
     }
 
-    public Optional<Checkout_Cart> findById(Long id) {
+    public Optional<ZZZ_Cart> findById(Long id) {
         return Optional.ofNullable(carts.get(id));
     }
 
-    public Optional<Checkout_Cart> findByUserId(Long userId) {
+    public Optional<ZZZ_Cart> findByUserId(Long userId) {
         return userCartLinkRepository.getCartIdByUserId(userId)
                 .flatMap(this::findById);
     }
 
-    public List<Checkout_Cart> findAll() {
+    public List<ZZZ_Cart> findAll() {
         return new ArrayList<>(carts.values());
     }
 
     public void deleteById(Long cartId) {
-        Checkout_Cart removedCart = carts.remove(cartId);
+        ZZZ_Cart removedCart = carts.remove(cartId);
         if (removedCart != null) {
             // Remove associated links and items
             if (removedCart.getUser() != null) {

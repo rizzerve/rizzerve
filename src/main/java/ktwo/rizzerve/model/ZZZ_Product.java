@@ -1,6 +1,7 @@
-package k2.rizzerve.model;
+package ktwo.rizzerve.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
@@ -9,7 +10,7 @@ import java.math.BigDecimal;
 @Table(name = "products") // Define table name
 @Data // Lombok for getters, setters, toString, equals, hashCode
 @NoArgsConstructor // JPA requires a no-arg constructor
-public class Checkout_Product {
+public class ZZZ_Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment ID
@@ -23,7 +24,7 @@ public class Checkout_Product {
     private BigDecimal price;
 
     // Constructor for creating new products easily
-    public Checkout_Product(String name, BigDecimal price) {
+    public ZZZ_Product(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
     }

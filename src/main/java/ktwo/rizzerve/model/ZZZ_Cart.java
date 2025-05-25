@@ -1,6 +1,7 @@
-package k2.rizzerve.model;
+package ktwo.rizzerve.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.Set;
 @Table(name = "carts")
 @Data
 @NoArgsConstructor
-public class Checkout_Cart {
+public class ZZZ_Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,28 +33,28 @@ public class Checkout_Cart {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER) // EAGER might be ok for Cart
     @EqualsAndHashCode.Exclude // Avoid recursion in Lombok methods
     @ToString.Exclude // Avoid recursion in Lombok methods
-    private Set<CartItem> items = new HashSet<>();
+    private Set<ZZZ_CartItem> items = new HashSet<>();
 
-    public Checkout_Cart(User user) {
+    public ZZZ_Cart(User user) {
         this.user = user;
     }
 
     // Method to calculate the total price of all items in the cart
     public BigDecimal calculateTotal() {
         return items.stream()
-                .map(CartItem::getSubtotal) // Use the subtotal method from CartItem
+                .map(ZZZ_CartItem::getSubtotal) // Use the subtotal method from CartItem
                 .reduce(BigDecimal.ZERO, BigDecimal::add); // Sum up all subtotals
     }
 
     // Method to add an item - NOTE: This just adds the pre-created CartItem object
     // A better version would take Product and quantity, and manage CartItem creation/update internally
-    public void addItem(CartItem item) {
+    public void addItem(ZZZ_CartItem item) {
         item.setCart(this); // Ensure relationship is bidirectional
         this.items.add(item);
     }
 
     // Method to remove an item
-    public void removeItem(CartItem item) {
+    public void removeItem(ZZZ_CartItem item) {
         this.items.remove(item);
         item.setCart(null); // Break relationship
     }

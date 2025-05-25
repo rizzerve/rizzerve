@@ -1,22 +1,22 @@
-package k2.rizzerve.model;
+package ktwo.rizzerve.model;
 
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class Checkout_CartItemTest {
+public class ZZZ_CartItemTest {
 
     @Test
     void cartItemShouldCalculateSubtotal() {
         // Arrange
-        Checkout_Product product = new Checkout_Product("Latte", new BigDecimal("4.00"));
+        ZZZ_Product product = new ZZZ_Product("Latte", new BigDecimal("4.00"));
         product.setId(1L);
-        Checkout_Cart cart = new Checkout_Cart(); // Assume Cart exists for linking, can mock later
+        ZZZ_Cart cart = new ZZZ_Cart(); // Assume Cart exists for linking, can mock later
         cart.setId(1L);
         int quantity = 3;
 
         // Act
-        CartItem cartItem = new CartItem(cart, product, quantity);
+        ZZZ_CartItem cartItem = new ZZZ_CartItem(cart, product, quantity);
         cartItem.setId(10L); // Simulate ID
 
         // Assert
@@ -31,13 +31,13 @@ public class Checkout_CartItemTest {
     @Test
     void cartItemSubtotalShouldBeZeroIfProductOrPriceIsNull() {
         // Arrange
-        Checkout_Cart cart = new Checkout_Cart(); cart.setId(1L);
-        Checkout_Product nullPriceProduct = new Checkout_Product("Mystery Drink", null); nullPriceProduct.setId(2L);
-        Checkout_Product nullProduct = null; // Representing an error state
+        ZZZ_Cart cart = new ZZZ_Cart(); cart.setId(1L);
+        ZZZ_Product nullPriceProduct = new ZZZ_Product("Mystery Drink", null); nullPriceProduct.setId(2L);
+        ZZZ_Product nullProduct = null; // Representing an error state
 
         // Act
-        CartItem item1 = new CartItem(cart, nullPriceProduct, 2);
-        CartItem item2 = new CartItem(cart, nullProduct, 1);
+        ZZZ_CartItem item1 = new ZZZ_CartItem(cart, nullPriceProduct, 2);
+        ZZZ_CartItem item2 = new ZZZ_CartItem(cart, nullProduct, 1);
 
 
         // Assert

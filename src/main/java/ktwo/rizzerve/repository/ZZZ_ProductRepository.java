@@ -1,6 +1,6 @@
-package k2.rizzerve.repository;
+package ktwo.rizzerve.repository;
 
-import k2.rizzerve.model.Checkout_Product;
+import ktwo.rizzerve.model.ZZZ_Product;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -11,11 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-public class Checkout_ProductRepository {
-    private final Map<Long, Checkout_Product> products = new ConcurrentHashMap<>();
+public class ZZZ_ProductRepository {
+    private final Map<Long, ZZZ_Product> products = new ConcurrentHashMap<>();
     private final AtomicLong idCounter = new AtomicLong(1);
 
-    public Checkout_Product save(Checkout_Product product) {
+    public ZZZ_Product save(ZZZ_Product product) {
         if (product.getId() == null) {
             product.setId(idCounter.getAndIncrement());
         }
@@ -23,11 +23,11 @@ public class Checkout_ProductRepository {
         return product;
     }
 
-    public Optional<Checkout_Product> findById(Long id) {
+    public Optional<ZZZ_Product> findById(Long id) {
         return Optional.ofNullable(products.get(id));
     }
 
-    public List<Checkout_Product> findAll() {
+    public List<ZZZ_Product> findAll() {
         return new ArrayList<>(products.values());
     }
 

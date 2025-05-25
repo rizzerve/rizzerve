@@ -1,10 +1,10 @@
-package k2.rizzerve.model;
+package ktwo.rizzerve.model;
 
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class Checkout_ProductTest {
+public class ZZZ_ProductTest {
 
     @Test
     void productShouldHaveIdNameAndPrice() {
@@ -13,7 +13,7 @@ public class Checkout_ProductTest {
         BigDecimal price = new BigDecimal("3.50");
 
         // Act
-        Checkout_Product product = new Checkout_Product(name, price);
+        ZZZ_Product product = new ZZZ_Product(name, price);
         product.setId(1L); // Simulate ID assignment
 
         // Assert

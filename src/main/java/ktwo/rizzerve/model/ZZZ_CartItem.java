@@ -1,7 +1,8 @@
-package k2.rizzerve.model;
+package ktwo.rizzerve.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 @Table(name = "cart_items")
 @Data
 @NoArgsConstructor
-public class CartItem {
+public class ZZZ_CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,17 +20,17 @@ public class CartItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
     @JsonIgnore // Prevents serializing the 'cart' field back to client
-    private Checkout_Cart cart;
+    private ZZZ_Cart cart;
 
     // If product details (like name) are needed in the response, EAGER can be simpler here, otherwise use a DTO.
     @ManyToOne(fetch = FetchType.EAGER) // << CHANGED TO EAGER (was LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    private Checkout_Product product;
+    private ZZZ_Product product;
 
     @Column(nullable = false)
     private int quantity;
 
-    public CartItem(Checkout_Cart cart, Checkout_Product product, int quantity) {
+    public ZZZ_CartItem(ZZZ_Cart cart, ZZZ_Product product, int quantity) {
         this.cart = cart;
         this.product = product;
         this.quantity = quantity;
