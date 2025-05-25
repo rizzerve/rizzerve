@@ -1,12 +1,15 @@
+
 package ktwo.rizzerve.service;
 
+import ktwo.rizzerve.command.CreateRatingCommand;
 import ktwo.rizzerve.command.RatingCommand;
+import ktwo.rizzerve.command.UpdateRatingCommand;
 import ktwo.rizzerve.model.Rating;
 import ktwo.rizzerve.repository.RatingRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,39 +19,68 @@ import static org.mockito.Mockito.*;
 
 class RatingServiceImplTest {
 
-    RatingRepository repo = mock(RatingRepository.class);
-    RatingServiceImpl service = new RatingServiceImpl(repo);
+    RatingRepository ratingRepository;
+    RatingServiceImpl ratingService;
 
-    @Test
-    void testExecuteCommand() {
-        RatingCommand cmd = mock(RatingCommand.class);
-        Rating expected = new Rating();
-        when(cmd.execute()).thenReturn(expected);
-
-        Rating result = service.executeCommand(cmd);
-        assertEquals(expected, result);
+    @BeforeEach
+    void setUp() {
+        ratingRepository = mock(RatingRepository.class);
+        SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
+        ratingService = new RatingServiceImpl(ratingRepository, meterRegistry);
+        ratingService.initMetrics();
     }
 
     @Test
-    void testGetAll() {
-        List<Rating> ratings = Arrays.asList(new Rating(), new Rating());
-        when(repo.findAll()).thenReturn(ratings);
+    void testExecuteCreateCommand_shouldIncrementCreateCounter() {
+        CreateRatingCommand command = mock(CreateRatingCommand.class);
+        Rating rating = new Rating();
+        when(command.execute()).thenReturn(rating);
 
-        assertEquals(2, service.getAll().size());
+        Rating result = ratingService.executeCommand(command);
+
+        assertEquals(rating, result);
+        verify(command, times(1)).execute();
     }
 
     @Test
-    void testGetById() {
+    void testExecuteUpdateCommand_shouldIncrementUpdateCounter() {
+        UpdateRatingCommand command = mock(UpdateRatingCommand.class);
+        Rating rating = new Rating();
+        when(command.execute()).thenReturn(rating);
+
+        Rating result = ratingService.executeCommand(command);
+
+        assertEquals(rating, result);
+        verify(command, times(1)).execute();
+    }
+
+    @Test
+    void testGetAllRatings() {
+        when(ratingRepository.findAll()).thenReturn(List.of(new Rating(), new Rating()));
+        assertEquals(2, ratingService.getAll().size());
+    }
+
+    @Test
+    void testGetRatingById_validUUID() {
         UUID id = UUID.randomUUID();
-        Rating r = new Rating();
-        when(repo.findById(id)).thenReturn(Optional.of(r));
-
-        assertEquals(r, service.getById(id.toString()));
+        Rating rating = new Rating();
+        when(ratingRepository.findById(id)).thenReturn(Optional.of(rating));
+        assertEquals(rating, ratingService.getById(id.toString()));
     }
 
     @Test
-    void testGetByMenu() {
-        when(repo.findByMenuItem_Id(1L)).thenReturn(List.of(new Rating()));
-        assertEquals(1, service.getByMenu("1").size());
+    void testGetRatingById_invalidUUID() {
+        assertNull(ratingService.getById("not-a-uuid"));
+    }
+
+    @Test
+    void testGetByMenu_validId() {
+        when(ratingRepository.findByMenuItem_Id(1L)).thenReturn(List.of(new Rating()));
+        assertEquals(1, ratingService.getByMenu("1").size());
+    }
+
+    @Test
+    void testGetByMenu_invalidId() {
+        assertTrue(ratingService.getByMenu("invalid").isEmpty());
     }
 }
