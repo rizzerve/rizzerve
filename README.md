@@ -61,7 +61,7 @@ To address this, we introduced a new component: Security Audit Service. This com
 
 Overall, this architectural change significantly reduces our project’s total risk score, particularly in the Security and Data Integrity categories. It also aligns with the system’s growth projection by providing a scalable foundation for monitoring and future compliance requirements. The updated container and context diagrams clearly reflect this evolution, ensuring our system is both robust and audit-ready.
 
-# Monitoring & Observability
+# Monitoring & Observability 
 ### Manage Table Feature
 Isaac Jesse Boentoro - 2306256362
 This project comes with a docker-compose.yml file that can be run with `docker-commpose up -d` to launch Prometheus and Grafana visualizers to monitor the amount of tables created and similar statistics. In terms of profiling, there is a Grafana K6 stress test `table-stress-test.js` which ramps up to 50 virtual users that view, create and delete tables. Below is the flame graph:
@@ -69,6 +69,16 @@ This project comes with a docker-compose.yml file that can be run with `docker-c
 Upon inspecting the flame graph, no particular hot spots were found, and all the code related to the stress test was functioning optimally. Therefore, no changes were made to the code (besides adding the monitoring capability). Prometheus deployment can be found at
 
 https://rizzerve-monitor.ambitiouswater-27e3bbd0.southeastasia.azurecontainerapps.io/graph?g0.expr=&g0.tab=1&g0.stacked=0&g0.show_exemplars=0&g0.range_input=1h
+
+### Manage Table Feature Profiling
+Samuella Putri Nadia Pauntu - 2306170446
+
+#### Light load
+![](images/rating1profile.png)
+
+#### Heavy load
+![](images/rating2profile.png)
+For the profiling process, I used the built-in performance profiler in IntelliJ IDEA to measure the execution time of the RatingServiceImpl class, which handles the creation, update, retrieval, and deletion of user-submitted ratings. I conducted two scenarios: a simple usage case (shown in the first screenshot) and a more intensive, concurrent user case. In the first scenario, I simulated a typical user flow by performing only basic operations: submitting, updating, and deleting a rating once each. The profiler results show that the getAll() method had the highest execution time (2,624 ms), followed by executeCommand() (2,256 ms), getByMenu() (632 ms), and getById() (551 ms). These values reflect a light load and minimal user interaction. In the second scenario, I increased the load by simulating multiple users accessing the rating feature simultaneously through two browser windows. Each user performed several rating submissions, edits, and deletions. As expected, the execution time for each method increased significantly. The getAll() method spiked to 6,772 ms, and executeCommand() reached 5,511 ms, showing the increased demand on the service layer under higher concurrency and interaction frequency. The profiling results demonstrate that while RatingServiceImpl performs adequately under light usage, its response time increases linearly with user activity. This indicates potential bottlenecks in data access or in the command execution pattern. Optimization may be necessary for scalability, such as reducing redundant database queries in getAll() or optimizing the internal logic of executeCommand() when dealing with higher loads.
 
 ## INDIVIDUAL DIAGRAMS
 ### Food Rating Feature
