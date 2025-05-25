@@ -1,6 +1,6 @@
 package ktwo.rizzerve.repository;
 
-import k2.rizzerve.model.Order;
+import ktwo.rizzerve.model.Order;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
