@@ -15,6 +15,8 @@ import java.util.List;
 @RequestMapping("/menus")
 public class MenuItemViewController {
 
+    private static final String REDIRECT_MENUS = "redirect:/menus";
+
     private final MenuItemService menuService;
     private final CategoryService categoryService;
 
@@ -26,10 +28,7 @@ public class MenuItemViewController {
         this.categoryService = categoryService;
     }
 
-    /**
-     * Always add the full list of categories to every model
-     * so your menu_form.html can render the dropdown.
-     */
+    /** Populate the categories for the dropdown in the menu form */
     @ModelAttribute("categories")
     public List<Category> populateCategories() {
         return categoryService.listAll();
@@ -61,11 +60,11 @@ public class MenuItemViewController {
             return "menu_form";
         } catch (IllegalArgumentException e) {
             attrs.addFlashAttribute("error", e.getMessage());
-            return "redirect:/menus";
+            return REDIRECT_MENUS;
         }
     }
 
-    /** Handle both create & update (because menu.id will be null for new items) */
+    /** Handle both create & update */
     @PostMapping
     public String save(
             @ModelAttribute MenuItem menu,
@@ -73,7 +72,7 @@ public class MenuItemViewController {
     ) {
         menuService.add(menu);
         attrs.addFlashAttribute("success", "Saved!");
-        return "redirect:/menus";
+        return REDIRECT_MENUS;
     }
 
     /** Delete a menu item */
@@ -84,6 +83,6 @@ public class MenuItemViewController {
     ) {
         menuService.delete(id);
         attrs.addFlashAttribute("success", "Deleted!");
-        return "redirect:/menus";
+        return REDIRECT_MENUS;
     }
 }
