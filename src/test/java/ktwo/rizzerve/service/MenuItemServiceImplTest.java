@@ -1,5 +1,7 @@
 package ktwo.rizzerve.service;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import ktwo.rizzerve.controller.MenuUpdateSSEController;
 import ktwo.rizzerve.model.MenuItem;
 import ktwo.rizzerve.repository.MenuItemRepository;
@@ -27,7 +29,8 @@ class MenuItemServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        service = new MenuItemServiceImpl(repo, sseController);
+        MeterRegistry registry = new SimpleMeterRegistry();
+        service = new MenuItemServiceImpl(repo, sseController, registry);
     }
 
     @Test

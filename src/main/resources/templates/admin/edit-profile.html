@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Edit Profile</title>
@@ -17,13 +17,23 @@
 
         <form id="editForm" class="auth-form">
             <div class="form-group">
-                <label>Name</label>
-                <input type="text" id="name" required />
+                <label for="name">Name</label>
+                <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                />
             </div>
 
             <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="username" required />
+                <label for="username">Username</label>
+                <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        required
+                />
             </div>
 
             <button type="submit" class="auth-button">💾 Save Changes</button>

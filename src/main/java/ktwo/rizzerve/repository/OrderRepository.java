@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @Repository
 public class OrderRepository {
@@ -17,6 +18,12 @@ public class OrderRepository {
         return orders.stream()
                 .filter(order -> order.getOrderId().equals(id))
                 .findFirst();
+    }
+
+    public List<Order> findAllByUsername(String username) {
+        return orders.stream()
+                .filter(order -> order.getUsername().equals(username))
+                .collect(Collectors.toList());
     }
 
     public void save(Order order) {

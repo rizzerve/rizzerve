@@ -7,10 +7,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
 @Controller
 @RequestMapping("/categories")
 public class CategoryViewController {
+
+    private static final String REDIRECT_CATEGORIES = "redirect:/categories";
 
     private final CategoryService service;
 
@@ -37,7 +38,7 @@ public class CategoryViewController {
             return "category_form";
         } catch (IllegalArgumentException e) {
             attrs.addFlashAttribute("error", e.getMessage());
-            return "redirect:/categories";
+            return REDIRECT_CATEGORIES;
         }
     }
 
@@ -45,13 +46,13 @@ public class CategoryViewController {
     public String save(@ModelAttribute Category category, RedirectAttributes attrs) {
         service.add(category);
         attrs.addFlashAttribute("success", "Saved!");
-        return "redirect:/categories";
+        return REDIRECT_CATEGORIES;
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id, RedirectAttributes attrs) {
         service.delete(id);
         attrs.addFlashAttribute("success", "Deleted!");
-        return "redirect:/categories";
+        return REDIRECT_CATEGORIES;
     }
 }

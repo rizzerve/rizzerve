@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -18,6 +20,16 @@ public class OrderController {
         try {
             Order order = orderService.findById(id);
             return new ResponseEntity<>(order, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/get-by-username/{username}")
+    public ResponseEntity<List<Order>> findByUsername(@PathVariable String username) {
+        try {
+            List<Order> orders = orderService.findAllByUsername(username);
+            return new ResponseEntity<>(orders, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
