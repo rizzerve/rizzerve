@@ -7,10 +7,10 @@ import ktwo.rizzerve.dto.AdminMapper;
 import ktwo.rizzerve.model.Admin;
 import ktwo.rizzerve.security.JwtTokenProvider;
 import ktwo.rizzerve.service.AdminService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +23,19 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired private AdminService svc;
-    @Autowired private JwtTokenProvider jwtProvider;
-    @Autowired private AuthenticationManager authManager;
+    private final AdminService svc;
+    private final JwtTokenProvider jwtProvider;
+    private final AuthenticationManager authManager;
+
+    public AdminController(
+            AdminService svc,
+            JwtTokenProvider jwtProvider,
+            AuthenticationManager authManager
+    ) {
+        this.svc = svc;
+        this.jwtProvider = jwtProvider;
+        this.authManager = authManager;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<AdminDto> register(@RequestBody AdminDto dto) {
@@ -34,25 +44,24 @@ public class AdminController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest req) {
+    public ResponseEntity<Map<String,String>> login(@RequestBody AuthRequest req) {
         var auth = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(req.username, req.password));
         UserDetails user = (UserDetails) auth.getPrincipal();
-
 
         Admin admin = svc.findByUsername(user.getUsername());
 
         String token = jwtProvider.createToken(
                 admin.getId(),
                 admin.getUsername(),
-                user.getAuthorities()
-                        .stream()
-                        .map(a -> a.getAuthority())
+                user.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
                         .toList()
         );
 
         return ResponseEntity.ok(Map.of("token", token));
     }
+
 
 
     @GetMapping("/logout")
@@ -83,7 +92,7 @@ public class AdminController {
                 updated.getId(),
                 updated.getUsername(),
                 user.getAuthorities().stream()
-                        .map(gr -> gr.getAuthority())
+                        .map(GrantedAuthority::getAuthority)
                         .toList()
         );
 

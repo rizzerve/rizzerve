@@ -16,8 +16,16 @@ import java.io.IOException;
 import java.util.List;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    @Autowired private JwtTokenProvider jwtProvider;
-    @Autowired private AdminService adminService;
+    private final JwtTokenProvider jwtProvider;
+    private final AdminService adminService;
+
+    public JwtAuthenticationFilter(
+            JwtTokenProvider jwtProvider,
+            AdminService adminService
+    ) {
+        this.jwtProvider = jwtProvider;
+        this.adminService = adminService;
+    }
 
     @Override
     protected void doFilterInternal(
