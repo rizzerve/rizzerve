@@ -28,10 +28,11 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
-		<sonar.host.url>http://localhost:9000</sonar.host.url>
-		<sonar.token>sqp_99302e6e3096fb492ad46951fe326e22c1425706</sonar.token>
-		<sonar.projectKey>rizzerve</sonar.projectKey>
-		<sonar.projectName>rizzerve</sonar.projectName>
+		<!-- SonarQube properties now use env variables through property references -->
+		<sonar.host.url>${env.SONAR_HOST_URL}</sonar.host.url>
+		<sonar.token>${env.SONAR_TOKEN}</sonar.token>
+		<sonar.projectKey>${env.SONAR_PROJECT_KEY}</sonar.projectKey>
+		<sonar.projectName>${env.SONAR_PROJECT_NAME}</sonar.projectName>
 	</properties>
 	<dependencies>
 		<!-- Micrometer Prometheus registry for exposing metrics to Prometheus -->
