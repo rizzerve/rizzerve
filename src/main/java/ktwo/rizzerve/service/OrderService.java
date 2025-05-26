@@ -5,6 +5,8 @@ import ktwo.rizzerve.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrderService {
     @Autowired
@@ -13,6 +15,10 @@ public class OrderService {
     public Order findById(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+    }
+
+    public List<Order> findAllByUsername(String username) {
+        return orderRepository.findAllByUsername(username);
     }
 
     public void save(Order order) {
