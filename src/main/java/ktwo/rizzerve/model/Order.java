@@ -20,7 +20,7 @@ public class Order {
     private Long orderId;
 
     @Column(nullable = false)
-    private Long customerId;
+    private String username;
 
     @Column(nullable = false)
     private Long tableId;
@@ -35,8 +35,8 @@ public class Order {
     @Column(nullable = false)
     private OrderStatus status = OrderStatus.AWAITING_PAYMENT;
 
-    public Order(Long customerId, Long tableId) {
-        this.customerId = customerId;
+    public Order(String username, Long tableId) {
+        this.username = username;
         this.tableId = tableId;
     }
 
