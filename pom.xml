@@ -28,6 +28,10 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<sonar.host.url>http://localhost:9000</sonar.host.url>
+		<sonar.token>sqp_99302e6e3096fb492ad46951fe326e22c1425706</sonar.token>
+		<sonar.projectKey>rizzerve</sonar.projectKey>
+		<sonar.projectName>rizzerve</sonar.projectName>
 	</properties>
 	<dependencies>
 		<!-- Micrometer Prometheus registry for exposing metrics to Prometheus -->
@@ -165,7 +169,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.10</version>
+				<version>0.8.11</version> <!-- Update to 0.8.11 to support Java 21 -->
 				<executions>
 					<execution>
 						<goals>
@@ -180,6 +184,11 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.10.0.2594</version>
 			</plugin>
 		</plugins>
 	</build>

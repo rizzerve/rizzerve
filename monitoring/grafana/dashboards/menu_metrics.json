@@ -1,0 +1,60 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Menu Metrics Dashboard",
+    "timezone": "browser",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Menu Created Count",
+        "targets": [
+          {
+            "expr": "menuitem_created_total",
+            "legendFormat": "Menu Created"
+          }
+        ],
+        "datasource": "Prometheus",
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "type": "graph",
+        "title": "Menu Deleted Count",
+        "targets": [
+          {
+            "expr": "menuitem_deleted_total",
+            "legendFormat": "Menu Deleted"
+          }
+        ],
+        "datasource": "Prometheus",
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "type": "graph",
+        "title": "Menu List Duration",
+        "targets": [
+          {
+            "expr": "menuitem_list_duration_seconds_count",
+            "legendFormat": "List Duration Count"
+          }
+        ],
+        "datasource": "Prometheus",
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }
+      },
+      {
+        "type": "graph",
+        "title": "Menu Update Duration",
+        "targets": [
+          {
+            "expr": "menuitem_update_duration_seconds_sum",
+            "legendFormat": "Update Duration Sum"
+          }
+        ],
+        "datasource": "Prometheus",
+        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 }
+      }
+    ],
+    "schemaVersion": 36,
+    "version": 1,
+    "refresh": "10s"
+  }
+}
