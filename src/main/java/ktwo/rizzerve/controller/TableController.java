@@ -37,7 +37,7 @@ class TableController {
      * @return The created table or an error message
      */
     @PostMapping
-    ResponseEntity<?> createTable(@RequestParam(required = true) String tableNumber,
+    ResponseEntity<Object> createTable(@RequestParam(required = true) String tableNumber,
                                   @RequestHeader(value = "Accept", required = false) String accept) {
         try {
             if (tableNumber == null || tableNumber.trim().isEmpty()) {
@@ -89,7 +89,7 @@ class TableController {
      * @return The updated table or an error message
      */
     @PutMapping("/{id}")
-    ResponseEntity<?> updateTable(@PathVariable Long id,
+    ResponseEntity<Object> updateTable(@PathVariable Long id,
                                   @RequestParam(required = true) String newTableNumber,
                                   @RequestHeader(value = "Accept", required = false) String accept) {
         try {
