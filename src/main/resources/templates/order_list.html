@@ -6,8 +6,8 @@
     <link rel="stylesheet" th:href="@{/css/menu.css}" />
 </head>
 <body>
-    <div th:replace="fragments/sidebar2 :: sidebar2"></div>
     <div th:replace="fragments/topnav :: topnav"></div>
+    <div th:replace="fragments/sidebar :: sidebar"></div>
 
     <h1>My Orders</h1>
 
@@ -78,5 +78,6 @@
                 }
             })
     </script>
+    <script src="/js/scroll.js"></script>
 </body>
 </html>
