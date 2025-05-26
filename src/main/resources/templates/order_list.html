@@ -5,6 +5,77 @@
     <title>Orders</title>
 </head>
 <body>
+    <div th:replace="fragments/sidebar2 :: sidebar2"></div>
+    <div th:replace="fragments/topnav :: topnav"></div>
 
+    <h1>My Orders</h1>
+
+    <div id="noOrdersMessage" style="display: none;">
+        <p>No orders found.</p>
+    </div>
+
+    <table id="ordersTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Table ID</th>
+                <th>Order Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="ordersBody">
+            <!-- Will be populated by JS -->
+        </tbody>
+    </table>
+
+    <script>
+        const username = localStorage.getItem("username");
+
+        fetch("/get-by-username/" + encodeURIComponent(username))
+            .then(res => res.json())
+            .then(orders => {
+                if (orders.length === 0) {
+                    document.getElementById("noOrdersMessage").style.display = "block";
+                } else {
+                    const table = document.getElementById("ordersTable");
+                    const tbody = document.getElementById("ordersBody");
+                    table.style.display = "table";
+
+                    orders.forEach(order => {
+                        const row = document.createElement("tr");
+
+                        const orderIdCell = document.createElement("td");
+                        orderIdCell.textContent = order.orderId;
+
+                        const tableIdCell = document.createElement("td");
+                        tableIdCell.textContent = order.tableId;
+
+                        const orderStatusCell = document.createElement("td");
+                        orderStatusCell.textContent = order.status;
+
+                        const viewOrderCell = document.createElement("td");
+                        const viewButton = document.createElement("button");
+                        viewButton.textContent = "View";
+                        viewButton.onclick = () => {
+                            window.location.href = `/order/${order.orderId}`
+                        };
+                        viewOrderCell.appendChild(viewButton);
+
+                        row.appendChild(orderIdCell);
+                        row.appendChild(tableIdCell);
+                        row.appendChild(orderStatusCell);
+                        row.appendChild(viewOrderCell);
+
+                        tbody.appendChild(row)
+                    })
+                    .catch(err => {
+                        console.error("Failed to load orders:", err)
+                        const noOrdersMessage = document.getElementById("noOrdersMessage");
+                        noOrdersMessage.textContent = "Error loading orders.";
+                        noOrdersMsg.style.display = "block";
+                    });
+                }
+            })
+    </script>
 </body>
 </html>
