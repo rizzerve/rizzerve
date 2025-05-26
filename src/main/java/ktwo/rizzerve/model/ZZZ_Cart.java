@@ -1,61 +1,65 @@
 package ktwo.rizzerve.model;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-
 import java.math.BigDecimal;
-import java.util.HashSet; // Using HashSet
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "carts")
 @Data
 @NoArgsConstructor
 public class ZZZ_Cart {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Each Cart belongs to one User
-    @OneToOne(fetch = FetchType.LAZY) // One User has one Cart
-    @JoinColumn(name = "user_id", nullable = false, unique = true) // Ensure one cart per user
-    private User user;
+    @Column(nullable = false)
+    private Long customerId;
 
-    // One Cart has many CartItems
-    // CascadeType.ALL: If Cart is saved/deleted, associated CartItems are too.
-    // orphanRemoval=true: If a CartItem is removed from this set, it's deleted from DB.
-    // mappedBy="cart": Indicates CartItem.cart field owns the relationship.
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER) // EAGER might be ok for Cart
-    @EqualsAndHashCode.Exclude // Avoid recursion in Lombok methods
-    @ToString.Exclude // Avoid recursion in Lombok methods
-    private Set<ZZZ_CartItem> items = new HashSet<>();
+    @Column(nullable = false)
+    private Long tableId;
 
-    public ZZZ_Cart(User user) {
-        this.user = user;
+    @ElementCollection
+    @CollectionTable(name = "cart_items", joinColumns = @JoinColumn(name = "cart_id"))
+    @MapKeyColumn(name = "menu_item_id")
+    @Column(name = "quantity")
+    private Map<Long, Integer> foodItems = new HashMap<>();
+
+    public ZZZ_Cart(Long customerId, Long tableId) {
+        this.customerId = customerId;
+        this.tableId = tableId;
     }
 
-    // Method to calculate the total price of all items in the cart
-    public BigDecimal calculateTotal() {
-        return items.stream()
-                .map(ZZZ_CartItem::getSubtotal) // Use the subtotal method from CartItem
-                .reduce(BigDecimal.ZERO, BigDecimal::add); // Sum up all subtotals
+    public void incrementQuantity(Long menuItemId) {
+        foodItems.merge(menuItemId, 1, Integer::sum);
     }
 
-    // Method to add an item - NOTE: This just adds the pre-created CartItem object
-    // A better version would take Product and quantity, and manage CartItem creation/update internally
-    public void addItem(ZZZ_CartItem item) {
-        item.setCart(this); // Ensure relationship is bidirectional
-        this.items.add(item);
+    public void decrementQuantity(Long menuItemId) {
+        foodItems.computeIfPresent(menuItemId, (k, v) -> v > 1 ? v - 1 : null);
     }
 
-    // Method to remove an item
-    public void removeItem(ZZZ_CartItem item) {
-        this.items.remove(item);
-        item.setCart(null); // Break relationship
+    public void setQuantity(Long menuItemId, int quantity) {
+        if (quantity < 1) {
+            foodItems.remove(menuItemId);
+        } else {
+            foodItems.put(menuItemId, quantity);
+        }
+    }
+
+    public BigDecimal calculateTotal(Map<Long, MenuItem> menuItems) {
+        return foodItems.entrySet().stream()
+                .filter(entry -> menuItems.containsKey(entry.getKey()))
+                .map(entry -> menuItems.get(entry.getKey()).getPrice()
+                        .multiply(BigDecimal.valueOf(entry.getValue())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public Order convertToOrder() {
+        Order order = new Order(customerId, tableId);
+        order.setFoodItems(new HashMap<>(foodItems));
+        return order;
     }
 }
