@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/order")
 public class OrderPageController {
-    @GetMapping("/")
+    @GetMapping("")
     public String showOrderListPage() {
         return "order_list";
     }
