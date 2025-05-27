@@ -1,6 +1,7 @@
 package ktwo.rizzerve.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
@@ -58,7 +59,7 @@ public class ZZZ_Cart {
     }
 
     public Order convertToOrder() {
-        Order order = new Order(customerId, tableId);
+        Order order = new Order(username, tableId);
         order.setFoodItems(new HashMap<>(foodItems));
         return order;
     }
