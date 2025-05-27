@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Checkout</title>
+</head>
+<body>
+<div th:if="${error}" class="error" th:text="${error}"></div>
+
+<div th:unless="${cart}">
+    <p>No active cart found</p>
+</div>
+
+<div th:if="${cart}">
+    <h2>Checkout for Customer ID: [[${cart.customerId}]]</h2>
+    <h3>Table: [[${cart.tableId}]]</h3>
+
+    <div th:each="entry : ${cart.foodItems}">
+        <div class="item">
+            <span th:text="${items[entry.key].name}"></span>
+            <button @click="decrementItem([[entry.key]])">-</button>
+            <span th:text="${entry.value}"></span>
+            <button @click="incrementItem([[entry.key]])">+</button>
+            <span th:text="'$' + ${items[entry.key].price * entry.value}"></span>
+        </div>
+    </div>
+
+    <div class="total">
+        Total: $<span th:text="${total}"></span>
+    </div>
+
+    <div class="coupon-section">
+        <input type="text" id="couponCode" placeholder="Enter coupon code">
+        <button @click="applyCoupon()">Apply Coupon</button>
+    </div>
+
+    <button @click="completeCheckout()">Complete Checkout</button>
+</div>
+
+<script>
+    function updateQuantity(itemId, delta) {
+        fetch(`/api/cart/${cartId}/items/${itemId}/${delta > 0 ? 'increment' : 'decrement'}`, {
+            method: 'POST'
+        }).then(/* update UI */);
+    }
+
+    function completeCheckout() {
+        fetch(`/api/cart/${cartId}/checkout`, {method: 'POST'})
+            .then(/* handle response */);
+    }
+</script>
+</body>
+</html>
