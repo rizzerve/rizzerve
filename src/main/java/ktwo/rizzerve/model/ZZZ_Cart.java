@@ -23,15 +23,16 @@ public class ZZZ_Cart {
     @Column(nullable = false)
     private Long tableId;
 
+    private String username;
+
     @ElementCollection
     @CollectionTable(name = "cart_items", joinColumns = @JoinColumn(name = "cart_id"))
     @MapKeyColumn(name = "menu_item_id")
     @Column(name = "quantity")
     private Map<Long, Integer> foodItems = new HashMap<>();
 
-    public ZZZ_Cart(Long customerId, Long tableId) {
-        this.customerId = customerId;
-        this.tableId = tableId;
+    public ZZZ_Cart(String username) {
+        this.username = username;
     }
 
     public void incrementQuantity(Long menuItemId) {
