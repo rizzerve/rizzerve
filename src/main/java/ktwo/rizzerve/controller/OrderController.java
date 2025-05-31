@@ -1,5 +1,6 @@
 package ktwo.rizzerve.controller;
 
+import ktwo.rizzerve.dto.OrderRequest;
 import ktwo.rizzerve.model.Order;
 import ktwo.rizzerve.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +37,9 @@ public class OrderController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> saveOrder(@RequestBody Order order) {
+    public ResponseEntity<String> saveOrder(@RequestBody OrderRequest request) {
         try {
-            orderService.save(order);
+            orderService.createOrderFromRequest(request);
             return new ResponseEntity<>("Order created successfully", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Error creating order", HttpStatus.INTERNAL_SERVER_ERROR);

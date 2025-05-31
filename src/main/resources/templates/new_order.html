@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu</title>
+    <link rel="stylesheet" th:href="@{/css/menu.css}" />
+</head>
+<body>
+
+<div th:replace="fragments/sidebar :: sidebar"></div>
+<div th:replace="fragments/topnav :: topnav"></div>
+
+<div class="main-content">
+    <div class="search-bar">
+        <label for="menu-search" class="sr-only">Search menu items</label>
+        <input type="text" id="menu-search" placeholder="Search menu items..." />
+    </div>
+
+    <nav class="category-nav">
+        <ul id="category-buttons"></ul>
+    </nav>
+
+    <main id="menu-sections"></main>
+
+    <div id="search-results" style="display:none;">
+        <h2 class="category-title">Search Results</h2>
+        <div class="menu-grid" id="search-grid"></div>
+    </div>
+
+    <div class="order-submit">
+        <button id="submit-order" type="button">Submit Order</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const categoryList = document.getElementById("category-buttons");
+        const menuSections = document.getElementById("menu-sections");
+        const searchResults = document.getElementById("search-results");
+        const searchGrid = document.getElementById("search-grid");
+        const searchInput = document.getElementById("menu-search");
+
+        let categoryMap = {};
+
+        function loadData() {
+            Promise.all([
+                fetch("/api/categories").then(res => res.json()),
+                fetch("/api/menuitems/with-ratings").then(res => res.json())
+            ]).then(([categories, menuItems]) => {
+                categoryList.innerHTML = "";
+                menuSections.innerHTML = "";
+                searchGrid.innerHTML = "";
+                categoryMap = {};
+
+                categories.forEach(cat => {
+                    const li = document.createElement("li");
+                    li.className = "category-item";
+                    li.innerHTML = `<button type="button" data-target="cat-${cat.id}" class="category-btn">${cat.name}</button>`;
+                    categoryList.appendChild(li);
+
+                    const section = document.createElement("section");
+                    section.id = `cat-${cat.id}`;
+                    section.innerHTML = `<h2 class="category-title">${cat.name}</h2><div class="menu-grid" id="grid-${cat.id}"></div>`;
+                    menuSections.appendChild(section);
+                    categoryMap[cat.id] = document.getElementById(`grid-${cat.id}`);
+                });
+
+                menuItems.forEach(item => {
+                    if (!categoryMap[item.category.id]) return;
+
+                    const card = document.createElement("div");
+                    card.className = "menu-card";
+                    card.dataset.itemId = item.id;
+
+                    const avgRating = item.averageRating > 0 ? `⭐ ${item.averageRating.toFixed(1)} / 5` : "No ratings yet";
+
+                    card.innerHTML = `
+                    <div class="menu-info">
+                        <p class="menu-name">${item.name}</p>
+                        <p class="menu-price">Rp ${item.price}</p>
+                        <p class="menu-description">${item.description}</p>
+                        <p class="menu-availability">${item.available ? '✅ Available' : '❌ Not Available'}</p>
+                        <p class="menu-rating">${avgRating}</p>
+                    </div>
+                    <div class="menu-action">
+                        ${item.available ? `
+                            <input type="number" value="0" class="item-amount">
+                        ` : `<input type="number" value="0" class="item-amount disabled" disabled>`}
+                    </div>
+                `;
+                    categoryMap[item.category.id].appendChild(card);
+                });
+
+                searchInput.addEventListener("input", () => {
+                    const query = searchInput.value.toLowerCase().trim();
+                    if (!query) {
+                        menuSections.style.display = "block";
+                        searchResults.style.display = "none";
+                        return;
+                    }
+
+                    menuSections.style.display = "none";
+                    searchResults.style.display = "block";
+                    searchGrid.innerHTML = "";
+
+                    document.querySelectorAll(".menu-card").forEach(card => {
+                        const name = card.querySelector(".menu-name")?.textContent.toLowerCase() || "";
+                        const desc = card.querySelector(".menu-description")?.textContent.toLowerCase() || "";
+                        const match = name.includes(query) || desc.includes(query);
+                        if (match) searchGrid.appendChild(card.cloneNode(true));
+                    });
+                });
+
+                if (typeof initCategoryScroll === "function") initCategoryScroll();
+            });
+        }
+
+        loadData();
+
+        const eventSource = new EventSource("/menu/stream");
+        eventSource.addEventListener("menu-update", () => loadData());
+    });
+
+    document.getElementById("submit-order").addEventListener("click", () => {
+        const username = localStorage.getItem("username");
+        const tableId = 938; // Temporary, will be changed later on
+
+        const orderItems = {};
+        document.querySelectorAll(".menu-card").forEach(card => {
+            const qtyInput = card.querySelector(".item-amount");
+            if (!qtyInput || qtyInput.disabled) return;
+
+            const qty = parseInt(qtyInput.value);
+            if (qty > 0) {
+                orderItems[card.dataset.itemId] = qty;
+            }
+        });
+
+        if (Object.keys(orderItems).length === 0) {
+            alert("Please select at least one item.");
+            return;
+        }
+
+        const orderPayload = {
+            username: username,
+            tableId: tableId,
+            items: {}
+        };
+
+        for (const [itemId, quantity] of Object.entries(orderItems)) {
+            orderPayload.items[itemId] = quantity;
+        }
+
+        fetch("/orders/save", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(orderPayload)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to submit order.");
+            return response.text();
+        })
+        .then(message => {
+            alert(message || "Order submitted successfully.");
+            document.querySelectorAll(".item-amount").forEach(input => input.value = 0);
+        })
+        .catch(err => alert(err.message));
+    });
+</script>
+<script src="/js/scroll.js"></script>
+</body>
+</html>

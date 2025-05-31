@@ -9,32 +9,34 @@
     <div th:replace="fragments/topnav :: topnav"></div>
     <div th:replace="fragments/sidebar :: sidebar"></div>
 
-    <h1>My Orders</h1>
+    <div class="main-content">
+        <h1>My Orders</h1>
 
-    <div id="noOrdersMessage" style="display: none;">
-        <p>No orders found.</p>
+        <div id="noOrdersMessage" style="display: none;">
+            <p>No orders found.</p>
+        </div>
+
+        <table id="ordersTable" style="border: 2px solid black; display: none;">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Table ID</th>
+                    <th>Order Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="ordersBody">
+                <!-- Will be populated by JS -->
+            </tbody>
+        </table>
+
+        <button onclick="window.location.href='/order/new'">New Order</button>
     </div>
-
-    <table id="ordersTable" style="border: 2px solid black; display: none;">
-        <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Table ID</th>
-                <th>Order Status</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody id="ordersBody">
-            <!-- Will be populated by JS -->
-        </tbody>
-    </table>
-
-    <button onclick="window.location.href='@{/new}'">New Order</button>
 
     <script>
         const username = localStorage.getItem("username");
 
-        fetch("/get-by-username/" + encodeURIComponent(username))
+        fetch("/orders/get-by-username/" + encodeURIComponent(username))
             .then(res => res.json())
             .then(orders => {
                 if (orders.length === 0) {
@@ -51,7 +53,7 @@
                         orderIdCell.textContent = order.orderId;
 
                         const tableIdCell = document.createElement("td");
-                        tableIdCell.textContent = order.tableId;
+                        tableIdCell.textContent = order.table?.id || "N/A";
 
                         const orderStatusCell = document.createElement("td");
                         orderStatusCell.textContent = order.status;
