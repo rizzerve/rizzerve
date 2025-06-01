@@ -52,7 +52,7 @@ public class OrderController {
     public ResponseEntity<String> deleteOrder(@PathVariable Long id) {
         try {
             orderService.deleteById(id);
-            return new ResponseEntity<>("Order deleted successfully", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Order deleted successfully", HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
         }
