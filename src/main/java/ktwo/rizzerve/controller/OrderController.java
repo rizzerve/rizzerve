@@ -18,10 +18,10 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> findById(@PathVariable Long id) {
+    public ResponseEntity<OrderDTO> findById(@PathVariable Long id) {
         try {
-            Order order = orderService.findById(id);
-            return new ResponseEntity<>(order, HttpStatus.OK);
+            OrderDTO orderDTO = orderService.findById(id);
+            return new ResponseEntity<>(orderDTO, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }

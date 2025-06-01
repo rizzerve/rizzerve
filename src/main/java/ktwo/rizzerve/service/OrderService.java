@@ -26,9 +26,20 @@ public class OrderService {
     @Autowired
     private TableRepository tableRepository;
 
-    public Order findById(Long id) {
-        return orderRepository.findById(id)
+    public OrderDTO findById(Long id) {
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+        return convertToDTO(order);
+    }
+
+    private OrderDTO convertToDTO(Order order) {
+        Long tableId = order.getTable().getId();
+        Map<Long, Integer> items = order.getItems().entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().getId(),
+                        Map.Entry::getValue
+                ));
+        return new OrderDTO(order.getOrderId(), order.getUsername(), tableId, items, order.getStatus());
     }
 
     public List<OrderDTO> findDTOsByUsername(String username) {
