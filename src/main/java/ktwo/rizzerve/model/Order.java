@@ -1,5 +1,6 @@
 package ktwo.rizzerve.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import ktwo.rizzerve.enums.OrderStatus;
 import lombok.AllArgsConstructor;

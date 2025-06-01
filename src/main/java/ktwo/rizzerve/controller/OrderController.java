@@ -1,5 +1,6 @@
 package ktwo.rizzerve.controller;
 
+import ktwo.rizzerve.dto.OrderDTO;
 import ktwo.rizzerve.dto.OrderRequest;
 import ktwo.rizzerve.model.Order;
 import ktwo.rizzerve.service.OrderService;
@@ -17,22 +18,23 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> findById(@PathVariable Long id) {
+    public ResponseEntity<OrderDTO> findById(@PathVariable Long id) {
         try {
-            Order order = orderService.findById(id);
-            return new ResponseEntity<>(order, HttpStatus.OK);
+            OrderDTO orderDTO = orderService.findById(id);
+            return new ResponseEntity<>(orderDTO, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("/get-by-username/{username}")
-    public ResponseEntity<List<Order>> findByUsername(@PathVariable String username) {
+    public ResponseEntity<List<OrderDTO>> findByUsername(@PathVariable String username) {
         try {
-            List<Order> orders = orderService.findAllByUsername(username);
+            List<OrderDTO> orders = orderService.findDTOsByUsername(username);
             return new ResponseEntity<>(orders, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -50,7 +52,7 @@ public class OrderController {
     public ResponseEntity<String> deleteOrder(@PathVariable Long id) {
         try {
             orderService.deleteById(id);
-            return new ResponseEntity<>("Order deleted successfully", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Order deleted successfully", HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
         }

@@ -164,7 +164,7 @@
         })
         .then(message => {
             alert(message || "Order submitted successfully.");
-            document.querySelectorAll(".item-amount").forEach(input => input.value = 0);
+            window.location.href = "/order";
         })
         .catch(err => alert(err.message));
     });
