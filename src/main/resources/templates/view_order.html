@@ -10,6 +10,7 @@
     <div th:replace="fragments/sidebar :: sidebar"></div>
 
     <div class="main-content">
+        <p><a href="/order">Back to Orders list</a></p>
         <h1>Order ID: <span th:text="${order.orderId}"></span></h1>
         <p><strong>Table ID:</strong> <span th:text="${order.tableId}"></span></p>
         <p><strong>Status:</strong> <span th:text="${order.status}"></span></p>
