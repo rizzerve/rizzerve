@@ -1,5 +1,6 @@
 package ktwo.rizzerve.controller;
 
+import ktwo.rizzerve.dto.OrderDTO;
 import ktwo.rizzerve.dto.OrderRequest;
 import ktwo.rizzerve.model.Order;
 import ktwo.rizzerve.service.OrderService;
@@ -27,12 +28,13 @@ public class OrderController {
     }
 
     @GetMapping("/get-by-username/{username}")
-    public ResponseEntity<List<Order>> findByUsername(@PathVariable String username) {
+    public ResponseEntity<List<OrderDTO>> findByUsername(@PathVariable String username) {
         try {
-            List<Order> orders = orderService.findAllByUsername(username);
+            List<OrderDTO> orders = orderService.findDTOsByUsername(username);
             return new ResponseEntity<>(orders, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -1,5 +1,6 @@
 package ktwo.rizzerve.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import ktwo.rizzerve.enums.OrderStatus;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "table_id", nullable = false)
+    @JsonIgnore
     private Table table;
 
     @ElementCollection
