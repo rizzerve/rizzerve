@@ -74,4 +74,25 @@ public class OrderService {
     public void deleteById(Long id) {
         orderRepository.deleteById(id);
     }
+
+    public void updateOrderItems(Long orderId, Map<Long, Integer> newItems) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        order.getItems().clear();
+
+        for (Map.Entry<Long, Integer> entry : newItems.entrySet()) {
+            Long itemId = entry.getKey();
+            Integer quantity = entry.getValue();
+
+            if (quantity <= 0) continue;
+
+            MenuItem item = menuItemRepository.findById(itemId)
+                    .orElseThrow(() -> new RuntimeException("Menu item not found: " + itemId));
+
+            order.addItem(item, quantity);
+        }
+
+        orderRepository.save(order);
+    }
 }

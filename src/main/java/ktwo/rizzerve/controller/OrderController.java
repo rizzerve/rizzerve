@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/orders")
@@ -55,6 +56,18 @@ public class OrderController {
             return new ResponseEntity<>("Order deleted successfully", HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping("/{id}/update-items")
+    public ResponseEntity<String> updateOrderItems(@PathVariable Long id, @RequestBody Map<Long, Integer> newItems) {
+        try {
+            orderService.updateOrderItems(id, newItems);
+            return new ResponseEntity<>("Order items updated successfully", HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to update order items", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
