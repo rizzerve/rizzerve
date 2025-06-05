@@ -26,4 +26,7 @@ public class Table {
     public Table(String tableNumber) {
         this.tableNumber = tableNumber;
     }
+
+    public Table(long l, String tableA) {
+    }
 }
